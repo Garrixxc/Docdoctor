@@ -1,0 +1,373 @@
+// This is your Prisma schema file
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============ NextAuth Models ============
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts    Account[]
+  sessions    Session[]
+  memberships Membership[]
+  
+  // Activity tracking
+  uploadedDocuments Document[]    @relation("UploadedBy")
+  triggeredRuns     Run[]         @relation("TriggeredBy")
+  reviewEvents      ReviewEvent[]
+  exports           Export[]      @relation("ExportedBy")
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ============ Multi-Tenancy Models ============
+
+model Workspace {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  settings  Json?    @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  memberships Membership[]
+  projects    Project[]
+
+  @@index([slug])
+  @@map("workspaces")
+}
+
+enum MembershipRole {
+  OWNER
+  ADMIN
+  MEMBER
+  REVIEWER
+}
+
+model Membership {
+  id          String         @id @default(cuid())
+  userId      String
+  workspaceId String
+  role        MembershipRole @default(MEMBER)
+  createdAt   DateTime       @default(now())
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, workspaceId])
+  @@index([workspaceId])
+  @@map("memberships")
+}
+
+// ============ Template & Project Models ============
+
+model Template {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  version   String   @default("1.0")
+  category  String
+  config    Json     // { fields: [], validators: [], settings: {} }
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  projects Project[]
+
+  @@index([slug])
+  @@index([category])
+  @@map("templates")
+}
+
+enum ProjectStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum ApiKeyMode {
+  PLATFORM
+  WORKSPACE
+  PROJECT
+}
+
+model Project {
+  id                 String        @id @default(cuid())
+  workspaceId        String
+  templateId         String
+  name               String
+  slug               String
+  requirements       Json?         @default("{}") // min liability limits, etc.
+  extractionSettings Json?         @default("{}") // model, chunking, thresholds
+  apiKeyMode         ApiKeyMode    @default(PLATFORM)
+  encryptedApiKey    String?
+  status             ProjectStatus @default(ACTIVE)
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  template  Template  @relation(fields: [templateId], references: [id])
+
+  documents Document[]
+  runs      Run[]
+  exports   Export[]
+
+  @@unique([workspaceId, slug])
+  @@index([workspaceId])
+  @@index([templateId])
+  @@map("projects")
+}
+
+// ============ Document & Processing Models ============
+
+enum DocumentStatus {
+  UPLOADED
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model Document {
+  id         String         @id @default(cuid())
+  projectId  String
+  name       String
+  fileUrl    String
+  fileType   String
+  fileSize   Int
+  uploadedBy String
+  status     DocumentStatus @default(UPLOADED)
+  metadata   Json?          @default("{}")
+  createdAt  DateTime       @default(now())
+
+  project   Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  uploader  User                @relation("UploadedBy", fields: [uploadedBy], references: [id])
+  records   ExtractionRecord[]
+
+  @@index([projectId])
+  @@map("documents")
+}
+
+enum RunStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model Run {
+  id               String    @id @default(cuid())
+  projectId        String
+  triggeredBy      String
+  status           RunStatus @default(PENDING)
+  settingsSnapshot Json      // Copy of extraction settings at run time
+  templateSnapshot Json      // Copy of template config at run time
+  startedAt        DateTime?
+  finishedAt       DateTime?
+  costEstimate     Float?
+  errorMessage     String?
+  progress         Json?     @default("{}")
+  createdAt        DateTime  @default(now())
+
+  project   Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  triggerer User               @relation("TriggeredBy", fields: [triggeredBy], references: [id])
+  steps     RunStep[]
+  records   ExtractionRecord[]
+  exports   Export[]
+
+  @@index([projectId])
+  @@index([status])
+  @@map("runs")
+}
+
+enum StepStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+model RunStep {
+  id         String     @id @default(cuid())
+  runId      String
+  stepName   String
+  status     StepStatus @default(PENDING)
+  input      Json?
+  output     Json?
+  error      String?
+  startedAt  DateTime?
+  finishedAt DateTime?
+  retryCount Int        @default(0)
+
+  run Run @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([runId])
+  @@map("run_steps")
+}
+
+// ============ Extraction & Review Models ============
+
+enum RecordStatus {
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+}
+
+model ExtractionRecord {
+  id             String       @id @default(cuid())
+  runId          String
+  documentId     String
+  overallStatus  RecordStatus @default(PENDING_REVIEW)
+  metadata       Json?        @default("{}")
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  run      Run                @relation(fields: [runId], references: [id], onDelete: Cascade)
+  document Document           @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  fields   ExtractionField[]
+
+  @@index([runId])
+  @@index([documentId])
+  @@index([overallStatus])
+  @@map("extraction_records")
+}
+
+enum ValidationStatus {
+  PASS
+  FAIL
+  WARNING
+}
+
+model ExtractionField {
+  id                 String           @id @default(cuid())
+  recordId           String
+  fieldName          String
+  fieldType          String
+  extractedValue     Json?
+  confidence         Decimal?         @db.Decimal(5, 4)
+  evidence           Json?            // { snippet, page, charOffsets }
+  validationStatus   ValidationStatus @default(PASS)
+  validationMessages Json?
+  isApproved         Boolean          @default(false)
+  approvedBy         String?
+  approvedAt         DateTime?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  record       ExtractionRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  reviewEvents ReviewEvent[]
+
+  @@index([recordId])
+  @@index([fieldName])
+  @@index([isApproved])
+  @@map("extraction_fields")
+}
+
+enum ReviewAction {
+  EDIT
+  APPROVE
+  REJECT
+}
+
+model ReviewEvent {
+  id        String       @id @default(cuid())
+  fieldId   String
+  userId    String
+  action    ReviewAction
+  oldValue  Json?
+  newValue  Json?
+  comment   String?
+  createdAt DateTime     @default(now())
+
+  field ExtractionField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  user  User            @relation(fields: [userId], references: [id])
+
+  @@index([fieldId])
+  @@index([userId])
+  @@map("review_events")
+}
+
+// ============ Export Models ============
+
+enum ExportFormat {
+  CSV
+  JSON
+}
+
+enum ExportStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model Export {
+  id          String       @id @default(cuid())
+  projectId   String
+  runId       String?
+  exportedBy  String
+  format      ExportFormat @default(CSV)
+  status      ExportStatus @default(PENDING)
+  fileUrl     String?
+  recordCount Int?
+  createdAt   DateTime     @default(now())
+
+  project  Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  run      Run?    @relation(fields: [runId], references: [id])
+  exporter User    @relation("ExportedBy", fields: [exportedBy], references: [id])
+
+  @@index([projectId])
+  @@index([runId])
+  @@map("exports")
+}
