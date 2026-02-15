@@ -60,10 +60,15 @@ export default function ProjectPage() {
                 }),
             });
 
+            if (!presignedRes.ok) {
+                const error = await presignedRes.json();
+                throw new Error(error.error || 'Failed to get upload URL');
+            }
+
             const { uploadUrl, fileUrl } = await presignedRes.json();
 
             // Upload to S3
-            await fetch(uploadUrl, {
+            const uploadRes = await fetch(uploadUrl, {
                 method: 'PUT',
                 body: file,
                 headers: {
@@ -71,8 +76,12 @@ export default function ProjectPage() {
                 },
             });
 
+            if (!uploadRes.ok) {
+                throw new Error(`S3 upload failed: ${uploadRes.statusText}`);
+            }
+
             // Register document
-            await fetch(`/api/projects/${projectId}/documents`, {
+            const docRes = await fetch(`/api/projects/${projectId}/documents`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -83,9 +92,16 @@ export default function ProjectPage() {
                 }),
             });
 
+            if (!docRes.ok) {
+                const error = await docRes.json();
+                throw new Error(error.error || 'Failed to register document');
+            }
+
             loadDocuments();
+            alert('Document uploaded successfully!');
         } catch (error) {
             console.error('Upload failed:', error);
+            alert(`Upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
         } finally {
             setUploading(false);
         }
