@@ -55,8 +55,21 @@ export class ProcessingOrchestrator {
                     const parsedDoc = await this.executeStep(
                         parseStep.id,
                         async () => {
-                            // Fetch document from S3
-                            const response = await fetch(document.fileUrl);
+                            // Generate presigned URL for download
+                            const { generatePresignedDownloadUrl } = await import('@/lib/storage/s3-client');
+
+                            // Extract S3 key from fileUrl
+                            const url = new URL(document.fileUrl);
+                            const key = url.pathname.substring(1); // Remove leading slash
+
+                            // Get presigned URL
+                            const presignedUrl = await generatePresignedDownloadUrl(key);
+
+                            // Fetch document from S3 using presigned URL
+                            const response = await fetch(presignedUrl);
+                            if (!response.ok) {
+                                throw new Error(`Failed to download document: ${response.statusText}`);
+                            }
                             const buffer = await response.arrayBuffer();
                             return await parseDocument(Buffer.from(buffer), document.fileType);
                         }
