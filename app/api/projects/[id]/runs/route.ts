@@ -77,6 +77,10 @@ export async function POST(
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
 
+        // Get document IDs from request body (optional)
+        const body = await request.json().catch(() => ({}));
+        const { documentIds } = body;
+
         // Create run with snapshots
         const run = await prisma.run.create({
             data: {
@@ -86,9 +90,11 @@ export async function POST(
                 settingsSnapshot: project.extractionSettings || {},
                 templateSnapshot: {
                     name: project.template.name,
+                    slug: project.template.slug,
                     version: project.template.version,
                     ...(project.template.config as object),
                 },
+                progress: documentIds ? { selectedDocumentIds: documentIds } : {},
             },
         });
 

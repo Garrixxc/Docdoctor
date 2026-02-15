@@ -34,10 +34,16 @@ export class ProcessingOrchestrator {
             }
 
             // Get documents for project
+            const progress = run.progress as any;
+            const selectedDocumentIds = progress?.selectedDocumentIds;
+
             const documents = await prisma.document.findMany({
                 where: {
                     projectId: run.projectId,
                     status: 'UPLOADED',
+                    ...(selectedDocumentIds && selectedDocumentIds.length > 0
+                        ? { id: { in: selectedDocumentIds } }
+                        : {}),
                 },
             });
 

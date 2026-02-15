@@ -18,6 +18,7 @@ export default function ProjectPage() {
     const [documents, setDocuments] = useState<any[]>([]);
     const [runs, setRuns] = useState<any[]>([]);
     const [uploading, setUploading] = useState(false);
+    const [selectedDocuments, setSelectedDocuments] = useState<Set<string>>(new Set());
 
     useEffect(() => {
         loadProject();
@@ -108,10 +109,37 @@ export default function ProjectPage() {
     }
 
     async function triggerRun() {
+        const documentIds = Array.from(selectedDocuments);
+        if (documentIds.length === 0) {
+            alert('Please select at least one document');
+            return;
+        }
+
         await fetch(`/api/projects/${projectId}/runs`, {
             method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ documentIds }),
         });
         loadRuns();
+        setSelectedDocuments(new Set()); // Clear selection after run
+    }
+
+    function toggleDocumentSelection(docId: string) {
+        const newSelection = new Set(selectedDocuments);
+        if (newSelection.has(docId)) {
+            newSelection.delete(docId);
+        } else {
+            newSelection.add(docId);
+        }
+        setSelectedDocuments(newSelection);
+    }
+
+    function toggleSelectAll() {
+        if (selectedDocuments.size === documents.length) {
+            setSelectedDocuments(new Set());
+        } else {
+            setSelectedDocuments(new Set(documents.map(d => d.id)));
+        }
     }
 
     if (!project) {
@@ -156,15 +184,51 @@ export default function ProjectPage() {
                         </CardContent>
                     </Card>
 
+                    {documents.length > 0 && (
+                        <Card>
+                            <CardHeader>
+                                <div className="flex items-center justify-between">
+                                    <CardTitle>Uploaded Documents</CardTitle>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={toggleSelectAll}
+                                    >
+                                        {selectedDocuments.size === documents.length ? 'Deselect All' : 'Select All'}
+                                    </Button>
+                                </div>
+                                <CardDescription>
+                                    {selectedDocuments.size} of {documents.length} selected
+                                </CardDescription>
+                            </CardHeader>
+                        </Card>
+                    )}
+
                     <div className="space-y-2">
                         {documents.map((doc) => (
                             <Card key={doc.id}>
-                                <CardContent className="flex items-center justify-between p-4">
-                                    <div>
+                                <CardContent className="flex items-center gap-4 p-4">
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedDocuments.has(doc.id)}
+                                        onChange={() => toggleDocumentSelection(doc.id)}
+                                        className="w-4 h-4 cursor-pointer"
+                                    />
+                                    <div className="flex-1">
                                         <p className="font-medium">{doc.name}</p>
                                         <p className="text-sm text-gray-600">
                                             {new Date(doc.createdAt).toLocaleString()}
                                         </p>
+                                        {doc.docTypeDetected && (
+                                            <p className="text-xs text-gray-500 mt-1">
+                                                Type: {doc.docTypeDetected} (Score: {(doc.docTypeScore * 100).toFixed(1)}%)
+                                            </p>
+                                        )}
+                                        {doc.skipReason && (
+                                            <p className="text-xs text-orange-600 mt-1">
+                                                ⚠️ {doc.skipReason}
+                                            </p>
+                                        )}
                                     </div>
                                     <Badge>{doc.status}</Badge>
                                 </CardContent>
@@ -177,13 +241,23 @@ export default function ProjectPage() {
                     <Card>
                         <CardHeader>
                             <CardTitle>Process Documents</CardTitle>
-                            <CardDescription>Extract data from uploaded documents</CardDescription>
+                            <CardDescription>
+                                Select documents and start extraction run
+                            </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <Button onClick={triggerRun} disabled={documents.length === 0}>
+                            <Button
+                                onClick={triggerRun}
+                                disabled={selectedDocuments.size === 0}
+                            >
                                 <Play className="w-4 h-4 mr-2" />
-                                Start New Run
+                                Start New Run ({selectedDocuments.size} document{selectedDocuments.size !== 1 ? 's' : ''})
                             </Button>
+                            {selectedDocuments.size === 0 && (
+                                <p className="text-sm text-gray-500 mt-2">
+                                    Go to Documents tab and select files to process
+                                </p>
+                            )}
                         </CardContent>
                     </Card>
 

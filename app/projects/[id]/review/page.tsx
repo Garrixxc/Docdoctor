@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Check, X, Eye } from 'lucide-react';
+import { EvidenceDrawer } from '@/components/evidence-drawer';
 
 export default function ReviewPage() {
     const params = useParams();
@@ -17,6 +18,11 @@ export default function ReviewPage() {
     const [records, setRecords] = useState<any[]>([]);
     const [editingField, setEditingField] = useState<string | null>(null);
     const [editValue, setEditValue] = useState('');
+    const [evidenceDrawer, setEvidenceDrawer] = useState<{
+        isOpen: boolean;
+        field: any;
+        document: any;
+    } | null>(null);
 
     useEffect(() => {
         if (runId) {
@@ -85,6 +91,38 @@ export default function ReviewPage() {
         return 'bg-red-100 text-red-800';
     };
 
+    const getFieldStatusBadge = (fieldStatus: string) => {
+        switch (fieldStatus) {
+            case 'PASS':
+                return <Badge variant="default">Pass</Badge>;
+            case 'MISSING':
+                return <Badge variant="secondary">Missing</Badge>;
+            case 'FAIL_VALIDATION':
+                return <Badge variant="destructive">Failed</Badge>;
+            case 'NEEDS_REVIEW':
+                return <Badge variant="outline">Needs Review</Badge>;
+            case 'SKIPPED_WRONG_DOC_TYPE':
+                return <Badge variant="secondary">Skipped</Badge>;
+            default:
+                return <Badge>{fieldStatus}</Badge>;
+        }
+    };
+
+    const getRecordStatusBadge = (recordStatus: string) => {
+        switch (recordStatus) {
+            case 'COMPLIANT':
+                return <Badge variant="default" className="bg-green-600">Compliant</Badge>;
+            case 'NON_COMPLIANT':
+                return <Badge variant="destructive">Non-Compliant</Badge>;
+            case 'NEEDS_REVIEW':
+                return <Badge variant="outline">Needs Review</Badge>;
+            case 'SKIPPED':
+                return <Badge variant="secondary">Skipped</Badge>;
+            default:
+                return <Badge>{recordStatus}</Badge>;
+        }
+    };
+
     return (
         <div className="container mx-auto px-4 py-8">
             <div className="flex justify-between items-center mb-8">
@@ -96,7 +134,20 @@ export default function ReviewPage() {
                 {records.map((record) => (
                     <Card key={record.id}>
                         <CardContent className="p-6">
-                            <h3 className="font-semibold text-lg mb-4">{record.document.name}</h3>
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="font-semibold text-lg">{record.document.name}</h3>
+                                {record.recordStatus && getRecordStatusBadge(record.recordStatus)}
+                            </div>
+                            {record.failedRulesJson && record.failedRulesJson.length > 0 && (
+                                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded">
+                                    <p className="text-sm font-medium text-red-800 mb-1">Compliance Issues:</p>
+                                    <ul className="text-sm text-red-700 list-disc list-inside">
+                                        {record.failedRulesJson.map((rule: string, idx: number) => (
+                                            <li key={idx}>{rule}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
 
                             <div className="overflow-x-auto">
                                 <table className="w-full">
@@ -141,16 +192,26 @@ export default function ReviewPage() {
                                                     </Badge>
                                                 </td>
                                                 <td className="py-3 px-4">
-                                                    {field.validationStatus === 'PASS' ? (
-                                                        <Badge variant="default">Pass</Badge>
-                                                    ) : (
-                                                        <Badge variant="destructive">
-                                                            {field.validationStatus}
-                                                        </Badge>
+                                                    {field.fieldStatus ? getFieldStatusBadge(field.fieldStatus) : getFieldStatusBadge(field.validationStatus)}
+                                                    {field.validationErrorsJson && field.validationErrorsJson.length > 0 && (
+                                                        <div className="text-xs text-red-600 mt-1">
+                                                            {field.validationErrorsJson[0].message}
+                                                        </div>
                                                     )}
                                                 </td>
                                                 <td className="py-3 px-4 text-right">
                                                     <div className="flex gap-2 justify-end">
+                                                        <Button
+                                                            size="sm"
+                                                            variant="ghost"
+                                                            onClick={() => setEvidenceDrawer({
+                                                                isOpen: true,
+                                                                field,
+                                                                document: record.document,
+                                                            })}
+                                                        >
+                                                            <Eye className="w-4 h-4" />
+                                                        </Button>
                                                         {!field.isApproved && (
                                                             <Button
                                                                 size="sm"
@@ -174,6 +235,20 @@ export default function ReviewPage() {
                     </Card>
                 ))}
             </div>
+
+            {/* Evidence Drawer */}
+            {evidenceDrawer && (
+                <EvidenceDrawer
+                    isOpen={evidenceDrawer.isOpen}
+                    onClose={() => setEvidenceDrawer(null)}
+                    fieldName={evidenceDrawer.field.fieldName}
+                    extractedValue={evidenceDrawer.field.extractedValue}
+                    confidence={Number(evidenceDrawer.field.confidence)}
+                    evidence={evidenceDrawer.field.evidenceJson}
+                    documentName={evidenceDrawer.document.name}
+                    documentUrl={evidenceDrawer.document.fileUrl}
+                />
+            )}
         </div>
     );
 }
