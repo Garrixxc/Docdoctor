@@ -16,6 +16,8 @@ export default function ReviewPage() {
     const runId = searchParams.get('runId');
 
     const [records, setRecords] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [editingField, setEditingField] = useState<string | null>(null);
     const [editValue, setEditValue] = useState('');
     const [evidenceDrawer, setEvidenceDrawer] = useState<{
@@ -31,9 +33,23 @@ export default function ReviewPage() {
     }, [runId]);
 
     async function loadRecords() {
-        const res = await fetch(`/api/runs/${runId}/records`);
-        const data = await res.json();
-        setRecords(data.records || []);
+        try {
+            setLoading(true);
+            setError(null);
+            const res = await fetch(`/api/runs/${runId}/records`);
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.error || `HTTP error! status: ${res.status}`);
+            }
+
+            setRecords(data.records || []);
+        } catch (err: any) {
+            console.error('Failed to load records:', err);
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     }
 
     async function updateField(fieldId: string, action: string, value?: any) {
@@ -129,6 +145,34 @@ export default function ReviewPage() {
                 <h1 className="text-3xl font-bold">Review Extracted Data</h1>
                 <Button onClick={exportData}>Export to CSV</Button>
             </div>
+
+            {loading && (
+                <div className="text-center py-20">
+                    <p className="text-gray-500">Loading records...</p>
+                </div>
+            )}
+
+            {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded mb-6">
+                    <p className="font-bold">Error loading records:</p>
+                    <p>{error}</p>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="mt-2"
+                        onClick={loadRecords}
+                    >
+                        Retry
+                    </Button>
+                </div>
+            )}
+
+            {!loading && !error && records.length === 0 && (
+                <div className="text-center py-20 bg-gray-50 rounded border border-dashed">
+                    <p className="text-gray-500 italic">No records found for this run.</p>
+                    <p className="text-sm text-gray-400 mt-2">Check the Runs tab to see if processing is complete.</p>
+                </div>
+            )}
 
             <div className="space-y-6">
                 {records.map((record) => (
