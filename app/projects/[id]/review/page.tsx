@@ -41,15 +41,41 @@ export default function ReviewPage() {
     }
 
     async function exportData() {
-        const res = await fetch(`/api/projects/${projectId}/export`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ runId }),
-        });
+        try {
+            const res = await fetch(`/api/projects/${projectId}/export`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ runId }),
+            });
 
-        const data = await res.json();
-        if (data.downloadUrl) {
-            window.open(data.downloadUrl, '_blank');
+            if (!res.ok) {
+                const error = await res.json();
+                alert(`Export failed: ${error.error || 'Unknown error'}`);
+                return;
+            }
+
+            const data = await res.json();
+            if (data.downloadUrl) {
+                // Generate presigned URL for download
+                const downloadRes = await fetch('/api/download', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fileUrl: data.downloadUrl }),
+                });
+
+                if (downloadRes.ok) {
+                    const { presignedUrl } = await downloadRes.json();
+                    window.open(presignedUrl, '_blank');
+                } else {
+                    // Fallback to direct URL
+                    window.open(data.downloadUrl, '_blank');
+                }
+
+                alert('Export successful! Download started.');
+            }
+        } catch (error) {
+            console.error('Export failed:', error);
+            alert(`Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }
 

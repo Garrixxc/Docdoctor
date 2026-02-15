@@ -30,24 +30,21 @@ export async function POST(
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
 
-        // Get approved records
+        // Get records from the run (all records, not just approved)
         const records = await prisma.extractionRecord.findMany({
             where: {
                 runId: runId || undefined,
                 run: { projectId },
-                overallStatus: 'APPROVED',
             },
             include: {
-                fields: {
-                    where: { isApproved: true },
-                },
+                fields: true, // Include all fields
                 document: true,
             },
         });
 
         if (records.length === 0) {
             return NextResponse.json(
-                { error: 'No approved records to export' },
+                { error: 'No records found for this run' },
                 { status: 400 }
             );
         }
