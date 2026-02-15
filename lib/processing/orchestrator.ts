@@ -75,7 +75,56 @@ export class ProcessingOrchestrator {
                         }
                     );
 
-                    // Step 2: Chunk document
+                    // Step 2: Classify document type
+                    const classifyStep = await this.createStep('classify_document', {
+                        documentId: document.id,
+                    });
+
+                    const classification = await this.executeStep(classifyStep.id, async () => {
+                        const { DocumentClassifier } = await import('@/lib/processing/classifiers/document-classifier');
+                        const template = run.templateSnapshot as any;
+                        const templateSlug = template.slug || 'vendor-compliance';
+
+                        const classifier = new DocumentClassifier(templateSlug);
+                        return classifier.classify(parsedDoc.text);
+                    });
+
+                    // Update document with classification results
+                    await prisma.document.update({
+                        where: { id: document.id },
+                        data: {
+                            docTypeScore: classification.score,
+                            docTypeDetected: classification.detectedType,
+                            docTypeReason: classification.reason,
+                        },
+                    });
+
+                    // Skip document if classification score is too low
+                    const CLASSIFICATION_THRESHOLD = 0.3;
+                    if (classification.score < CLASSIFICATION_THRESHOLD) {
+                        logger.warn({
+                            documentId: document.id,
+                            score: classification.score,
+                            detectedType: classification.detectedType,
+                        }, 'Document skipped due to low classification score');
+
+                        await prisma.document.update({
+                            where: { id: document.id },
+                            data: {
+                                skipReason: `Wrong document type: ${classification.reason}`,
+                            },
+                        });
+
+                        // Increment skipped count
+                        await prisma.run.update({
+                            where: { id: this.runId },
+                            data: { skippedCount: { increment: 1 } },
+                        });
+
+                        continue; // Skip to next document
+                    }
+
+                    // Step 3: Chunk document
                     const chunkStep = await this.createStep('chunk_document', {
                         documentId: document.id,
                     });
@@ -142,11 +191,13 @@ export class ProcessingOrchestrator {
                     const validationResults = await this.executeStep(
                         validateStep.id,
                         async () => {
+                            const { validateExtraction } = await import('@/lib/processing/validator-enhanced');
                             const templateConfig = run.templateSnapshot as any;
                             const projectRequirements = run.project.requirements as any;
 
                             return validateExtraction(
                                 extractionResult.data,
+                                extractionResult.confidence,
                                 templateConfig.validators || [],
                                 projectRequirements
                             );
@@ -159,22 +210,27 @@ export class ProcessingOrchestrator {
                     });
 
                     await this.executeStep(persistStep.id, async () => {
+                        const { computeRecordStatus, checkCOICompliance } = await import('@/lib/processing/compliance-checker');
+                        const templateConfig = run.templateSnapshot as any;
+                        const projectRequirements = run.project.requirements as any;
+
                         // Create extraction record
                         const record = await prisma.extractionRecord.create({
                             data: {
                                 runId: this.runId,
                                 documentId: document.id,
                                 overallStatus: 'PENDING_REVIEW',
+                                recordStatus: 'NEEDS_REVIEW', // Will be updated after fields are created
                             },
                         });
 
-                        // Create fields
-                        const templateConfig = run.templateSnapshot as any;
+                        // Create fields with enhanced validation
+                        const fieldStatusInfos = [];
                         for (const field of templateConfig.fields) {
                             const fieldName = field.name;
                             const value = extractionResult.data[fieldName];
                             const confidence = extractionResult.confidence[fieldName] || 0.5;
-                            const evidence = extractionResult.evidence[fieldName] || [];
+                            const evidence = extractionResult.evidence?.[fieldName];
 
                             const validationResult = validationResults.find(
                                 (v: any) => v.field === fieldName
@@ -187,12 +243,44 @@ export class ProcessingOrchestrator {
                                     fieldType: field.type,
                                     extractedValue: value,
                                     confidence,
-                                    evidence: evidence as any,
-                                    validationStatus: validationResult?.status || 'PASS',
-                                    validationMessages: validationResult?.messages || [],
+                                    evidenceJson: evidence ? JSON.parse(JSON.stringify(evidence)) : null,
+                                    validationStatus: validationResult?.legacyStatus || 'PASS',
+                                    fieldStatus: validationResult?.fieldStatus || 'NEEDS_REVIEW',
+                                    validationMessages: validationResult?.validationErrors || [],
+                                    validationErrorsJson: validationResult?.validationErrors || [],
                                 },
                             });
+
+                            fieldStatusInfos.push({
+                                fieldName,
+                                fieldStatus: validationResult?.fieldStatus || 'NEEDS_REVIEW',
+                                isRequired: field.required || false,
+                            });
                         }
+
+                        // Compute compliance status
+                        const complianceResult = computeRecordStatus(fieldStatusInfos);
+                        const coiViolations = checkCOICompliance(extractionResult.data, projectRequirements);
+
+                        const allFailedRules = [
+                            ...complianceResult.failedRules,
+                            ...coiViolations,
+                        ];
+
+                        // Update record with compliance status
+                        await prisma.extractionRecord.update({
+                            where: { id: record.id },
+                            data: {
+                                recordStatus: allFailedRules.length > 0 ? 'NON_COMPLIANT' : complianceResult.recordStatus,
+                                failedRulesJson: allFailedRules,
+                            },
+                        });
+
+                        // Increment processed count
+                        await prisma.run.update({
+                            where: { id: this.runId },
+                            data: { processedCount: { increment: 1 } },
+                        });
 
                         return { recordId: record.id };
                     });

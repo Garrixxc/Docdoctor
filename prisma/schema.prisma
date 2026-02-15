@@ -180,16 +180,21 @@ enum DocumentStatus {
 }
 
 model Document {
-  id         String         @id @default(cuid())
-  projectId  String
-  name       String
-  fileUrl    String
-  fileType   String
-  fileSize   Int
-  uploadedBy String
-  status     DocumentStatus @default(UPLOADED)
-  metadata   Json?          @default("{}")
-  createdAt  DateTime       @default(now())
+  id              String         @id @default(cuid())
+  projectId       String
+  name            String
+  fileUrl         String
+  fileType        String
+  fileSize        Int
+  uploadedBy      String
+  status          DocumentStatus @default(UPLOADED)
+  metadata        Json?          @default("{}")
+  // Document classification
+  docTypeScore    Float?
+  docTypeDetected String?
+  docTypeReason   String?
+  skipReason      String?
+  createdAt       DateTime       @default(now())
 
   project   Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
   uploader  User                @relation("UploadedBy", fields: [uploadedBy], references: [id])
@@ -213,6 +218,9 @@ model Run {
   status           RunStatus @default(PENDING)
   settingsSnapshot Json      // Copy of extraction settings at run time
   templateSnapshot Json      // Copy of template config at run time
+  // Run statistics
+  processedCount   Int       @default(0)
+  skippedCount     Int       @default(0)
   startedAt        DateTime?
   finishedAt       DateTime?
   costEstimate     Float?
@@ -262,16 +270,22 @@ enum RecordStatus {
   PENDING_REVIEW
   APPROVED
   REJECTED
+  COMPLIANT
+  NON_COMPLIANT
+  NEEDS_REVIEW
+  SKIPPED
 }
 
 model ExtractionRecord {
-  id             String       @id @default(cuid())
-  runId          String
-  documentId     String
-  overallStatus  RecordStatus @default(PENDING_REVIEW)
-  metadata       Json?        @default("{}")
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  id              String       @id @default(cuid())
+  runId           String
+  documentId      String
+  overallStatus   RecordStatus @default(PENDING_REVIEW)
+  recordStatus    RecordStatus @default(NEEDS_REVIEW) // Compliance status
+  failedRulesJson Json?        // Array of failed compliance rules
+  metadata        Json?        @default("{}")
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
 
   run      Run                @relation(fields: [runId], references: [id], onDelete: Cascade)
   document Document           @relation(fields: [documentId], references: [id], onDelete: Cascade)
@@ -289,21 +303,31 @@ enum ValidationStatus {
   WARNING
 }
 
+enum FieldStatus {
+  PASS
+  FAIL_VALIDATION
+  MISSING
+  NEEDS_REVIEW
+  SKIPPED_WRONG_DOC_TYPE
+}
+
 model ExtractionField {
-  id                 String           @id @default(cuid())
-  recordId           String
-  fieldName          String
-  fieldType          String
-  extractedValue     Json?
-  confidence         Decimal?         @db.Decimal(5, 4)
-  evidence           Json?            // { snippet, page, charOffsets }
-  validationStatus   ValidationStatus @default(PASS)
-  validationMessages Json?
-  isApproved         Boolean          @default(false)
-  approvedBy         String?
-  approvedAt         DateTime?
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @updatedAt
+  id                   String           @id @default(cuid())
+  recordId             String
+  fieldName            String
+  fieldType            String
+  extractedValue       Json?
+  confidence           Decimal?         @db.Decimal(5, 4)
+  evidenceJson         Json?            // { snippet, page, charOffsets, bounds }
+  validationStatus     ValidationStatus @default(PASS) // Legacy field
+  fieldStatus          FieldStatus      @default(NEEDS_REVIEW) // New status field
+  validationMessages   Json?
+  validationErrorsJson Json?            // Array of validation error objects
+  isApproved           Boolean          @default(false)
+  approvedBy           String?
+  approvedAt           DateTime?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
 
   record       ExtractionRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
   reviewEvents ReviewEvent[]
