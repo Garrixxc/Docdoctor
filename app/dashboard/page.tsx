@@ -55,11 +55,8 @@ export default function DashboardPage() {
                 if (isMounted) {
                     setUsage(usageData.usage);
                     setWorkspaceId(usageData.workspace.id);
-
-                    // Get projects only if we have a workspace
-                    const projectsRes = await fetch(`/api/projects?workspaceId=${usageData.workspace.id}`);
-                    const projectsData = await projectsRes.json();
-                    setProjects(projectsData.projects || []);
+                    // Use usageData.user.name or email if available, otherwise session name
+                    setProjects(usageData.projects || []);
                 }
             } catch (error) {
                 console.error('Failed to load dashboard data:', error);
@@ -93,8 +90,8 @@ export default function DashboardPage() {
                         <span className="text-[10px] font-black uppercase tracking-widest text-indigo-600">Command Center</span>
                     </div>
                     <div className="space-y-1">
-                        <h1 className="text-5xl font-display font-black tracking-tighter text-slate-900 leading-none">
-                            Welcome back, <span className="text-indigo-600">Gaurav</span>
+                        <h1 className="text-5xl font-outfit font-black tracking-tighter text-slate-900 leading-none">
+                            Welcome back
                         </h1>
                         <p className="text-xl text-slate-500 font-medium">Ready to orchestrate your data extractions today?</p>
                     </div>
@@ -106,7 +103,7 @@ export default function DashboardPage() {
                             <div className="flex justify-between items-start">
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Monthly Usage</p>
-                                    <h3 className="text-3xl font-display font-black text-slate-900">
+                                    <h3 className="text-3xl font-outfit font-black text-slate-900">
                                         {usage.pagesUsed}
                                         <span className="text-sm font-medium text-slate-400 ml-1">/ {usage.pagesLimit === 'unlimited' ? '∞' : usage.pagesLimit} pages</span>
                                     </h3>
@@ -143,7 +140,7 @@ export default function DashboardPage() {
             {/* Verticals Bento Grid */}
             <section className="space-y-8">
                 <div className="flex items-center gap-4">
-                    <h2 className="text-2xl font-display font-black tracking-tight text-slate-900">Studio Templates</h2>
+                    <h2 className="text-2xl font-outfit font-black tracking-tight text-slate-900">Studio Templates</h2>
                     <div className="h-[1px] flex-1 bg-slate-100" />
                 </div>
 
@@ -182,24 +179,24 @@ export default function DashboardPage() {
 
             {/* Project Ledger */}
             <section className="space-y-8 pb-20">
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="flex items-center gap-4 flex-1">
-                        <h2 className="text-2xl font-display font-black tracking-tight text-slate-900">Project Ledger</h2>
-                        <div className="h-[1px] flex-1 bg-slate-100" />
+                        <h2 className="text-2xl font-outfit font-black tracking-tight text-slate-900 shrink-0">Project Ledger</h2>
+                        <div className="h-[1px] flex-1 bg-slate-100 hidden sm:block" />
                     </div>
 
-                    <div className="flex items-center gap-4 ml-8">
-                        <div className="relative group">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                        <div className="relative group flex-1 sm:flex-none">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
                             <input
                                 type="text"
                                 placeholder="Search the ledger..."
-                                className="pl-11 pr-6 h-12 rounded-2xl bg-slate-50 border-transparent transition-all focus:bg-white focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-100 text-sm font-medium w-64"
+                                className="pl-11 pr-6 h-12 rounded-2xl bg-slate-50 border-transparent transition-all focus:bg-white focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-100 text-sm font-medium w-full sm:w-64"
                             />
                         </div>
                         <Button
                             onClick={() => router.push('/projects/new')}
-                            className="h-12 px-6 rounded-2xl font-black bg-slate-900 hover:bg-slate-800 text-white shadow-xl shadow-slate-200 transition-all active:scale-95 flex items-center gap-2"
+                            className="h-12 px-6 rounded-2xl font-black bg-slate-900 hover:bg-slate-800 text-white shadow-xl shadow-slate-200 transition-all active:scale-95 flex items-center justify-center gap-2"
                         >
                             <Plus className="w-4 h-4" /> New Studio
                         </Button>

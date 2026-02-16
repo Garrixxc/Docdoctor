@@ -141,7 +141,7 @@ function NewProjectContent() {
                         <ArrowLeft className="w-5 h-5 text-slate-600" />
                     </Button>
                     <div className="space-y-2">
-                        <h1 className="text-5xl font-display font-black text-slate-900 tracking-tighter leading-none">New Project Studio</h1>
+                        <h1 className="text-5xl font-outfit font-black text-slate-900 tracking-tighter leading-none">New Project Studio</h1>
                         <p className="text-xl text-slate-500 font-medium">Configure your industrial datasets for scale.</p>
                     </div>
                 </div>
@@ -195,7 +195,7 @@ function NewProjectContent() {
                 {step === 1 && (
                     <div className="space-y-12 animate-slide-up">
                         <div className="text-center space-y-4 max-w-2xl mx-auto">
-                            <h2 className="text-4xl font-display font-black text-slate-900 tracking-tight leading-tight">Select Infrastructure</h2>
+                            <h2 className="text-4xl font-outfit font-black text-slate-900 tracking-tight leading-tight">Select Infrastructure</h2>
                             <p className="text-slate-500 font-medium text-lg">Choose a plan that matches your project scale.</p>
                         </div>
 
@@ -218,7 +218,7 @@ function NewProjectContent() {
                     <div className="grid lg:grid-cols-12 gap-12 animate-slide-up">
                         <div className="lg:col-span-8 space-y-12">
                             <section className="space-y-8">
-                                <h2 className="text-3xl font-display font-black text-slate-900 leading-tight">Project Identity</h2>
+                                <h2 className="text-3xl font-outfit font-black text-slate-900 leading-tight">Project Identity</h2>
                                 <div className="space-y-4">
                                     <Label htmlFor="name" className="text-xs font-black uppercase tracking-widest text-slate-500 ml-1">Studio Name</Label>
                                     <Input
@@ -226,18 +226,18 @@ function NewProjectContent() {
                                         value={formData.name}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                         placeholder="e.g., Q1 2026 COI Compliance Audit"
-                                        className="h-16 px-8 rounded-2xl text-xl border-slate-100 bg-slate-50/50 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-display font-black"
+                                        className="h-16 px-8 rounded-2xl text-xl border-slate-100 bg-slate-50/50 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-outfit font-black"
                                     />
                                 </div>
                             </section>
 
                             <section className="space-y-8">
                                 <div className="flex items-center gap-4">
-                                    <h2 className="text-2xl font-display font-black text-slate-900 tracking-tight">Industrial Requirements</h2>
+                                    <h2 className="text-2xl font-outfit font-black text-slate-900 tracking-tight">Industrial Requirements</h2>
                                     <div className="h-[1px] flex-1 bg-slate-100" />
                                 </div>
                                 {selectedTemplate ? (
-                                    <div className="p-10 rounded-[2.5rem] bg-indigo-50/30 border border-indigo-100/50 space-y-10 relative overflow-hidden">
+                                    <div className="p-10 rounded-[2.5rem] bg-indigo-50/30 border border-indigo-100/50 space-y-10 relative overflow-hidden transition-all duration-700">
                                         <div className="absolute top-0 right-0 p-8 opacity-[0.05]">
                                             <Brain className="w-32 h-32 text-indigo-600" />
                                         </div>
@@ -246,7 +246,7 @@ function NewProjectContent() {
                                                 <Zap className="w-8 h-8 fill-white/20" />
                                             </div>
                                             <div>
-                                                <h4 className="text-xl font-display font-black text-slate-900">{selectedTemplate.name}</h4>
+                                                <h4 className="text-xl font-outfit font-black text-slate-900">{selectedTemplate.name}</h4>
                                                 <p className="text-slate-500 font-medium">{selectedTemplate.category} Vertical Intelligence</p>
                                             </div>
                                         </div>
@@ -287,12 +287,44 @@ function NewProjectContent() {
                                                 <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Standard Intelligent Field Mapping Active</p>
                                             </div>
                                         )}
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => setFormData({ ...formData, templateId: '' })}
+                                            className="text-[10px] font-black uppercase tracking-widest text-indigo-600 hover:bg-white"
+                                        >
+                                            Change Template
+                                        </Button>
                                     </div>
                                 ) : (
-                                    <div className="p-10 rounded-[2.5rem] bg-slate-50 border border-slate-100 flex items-center justify-center">
-                                        <div className="flex items-center gap-3 text-slate-400">
-                                            <Clock className="w-5 h-5 animate-spin" />
-                                            <span className="font-black uppercase tracking-widest text-[10px]">Loading Intelligence...</span>
+                                    <div className="space-y-6">
+                                        <p className="text-sm font-bold text-slate-400 uppercase tracking-widest ml-1">Available Intelligence Verticals</p>
+                                        <div className="grid md:grid-cols-2 gap-4">
+                                            {templates.length > 0 ? (
+                                                templates.map((t) => (
+                                                    <button
+                                                        key={t.id}
+                                                        onClick={() => setFormData({ ...formData, templateId: t.id })}
+                                                        className="group p-6 rounded-3xl bg-white border border-slate-100 hover:border-indigo-600 hover:shadow-2xl transition-all text-left flex items-center justify-between"
+                                                    >
+                                                        <div className="flex items-center gap-4">
+                                                            <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 group-hover:border-indigo-100 transition-all">
+                                                                <Brain className="w-6 h-6" />
+                                                            </div>
+                                                            <div>
+                                                                <h4 className="font-outfit font-black text-slate-900 leading-tight">{t.name}</h4>
+                                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{t.category}</p>
+                                                            </div>
+                                                        </div>
+                                                        <ArrowRight className="w-4 h-4 text-slate-200 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all" />
+                                                    </button>
+                                                ))
+                                            ) : (
+                                                <div className="col-span-2 p-14 rounded-[2rem] bg-slate-50 border border-slate-100 flex flex-col items-center justify-center text-center space-y-3">
+                                                    <Clock className="w-8 h-8 text-slate-300 animate-spin" />
+                                                    <p className="text-sm font-black text-slate-400 uppercase tracking-widest">Hydrating Vertical Models...</p>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 )}
@@ -314,34 +346,37 @@ function NewProjectContent() {
 
                         {/* Summary Deck */}
                         <div className="lg:col-span-4 space-y-6">
-                            <div className="noise glass rounded-[2.5rem] p-8 space-y-8 sticky top-32">
-                                <div className="space-y-1">
-                                    <h3 className="text-2xl font-display font-black text-slate-900 tracking-tight">Studio Setup</h3>
-                                    <p className="text-xs text-slate-500 font-medium">Build phase summary</p>
+                            <div className="noise glass rounded-[2.5rem] p-8 space-y-8 sticky top-32 border border-white/40 shadow-2xl shadow-slate-200/50">
+                                <div className="space-y-1 text-center lg:text-left">
+                                    <h3 className="text-2xl font-outfit font-black text-slate-900 tracking-tight leading-none">Studio Setup</h3>
+                                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest px-1">Build phase summary</p>
                                 </div>
 
-                                <div className="space-y-6">
-                                    <div className="flex justify-between items-center">
+                                <div className="space-y-6 bg-white/40 rounded-3xl p-6 border border-white/60">
+                                    <div className="flex justify-between items-center px-1">
                                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Plan</span>
-                                        <Badge variant="outline" className="bg-indigo-50 text-indigo-600 border-indigo-100 font-black">{plan}</Badge>
+                                        <Badge variant="outline" className="bg-gradient-to-r from-indigo-50 to-blue-50 text-indigo-700 border-indigo-100 font-black px-3 py-1 rounded-lg">{plan}</Badge>
                                     </div>
-                                    <div className="flex justify-between items-center">
+                                    <div className="flex justify-between items-center px-1">
                                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Vertical</span>
                                         <span className="text-sm font-black text-slate-900">{selectedTemplate?.name || 'Pending'}</span>
                                     </div>
-                                    <div className="flex justify-between items-center">
+                                    <div className="flex justify-between items-center px-1">
                                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Monthly Capacity</span>
                                         <span className="text-sm font-black text-slate-900">{plan === 'FREE' ? '50 Pages' : 'Unlimited'}</span>
                                     </div>
                                 </div>
 
-                                <div className="p-6 rounded-3xl bg-indigo-600 text-white space-y-4">
-                                    <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest opacity-80">
+                                <div className="p-6 rounded-[2rem] bg-indigo-600 text-white space-y-4 shadow-xl shadow-indigo-200 isolation-auto relative overflow-hidden group">
+                                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-700">
+                                        <Sparkles className="w-20 h-20" />
+                                    </div>
+                                    <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest opacity-80 relative z-10">
                                         <Sparkles className="w-4 h-4 fill-white/20" />
                                         Model Specification
                                     </div>
-                                    <div className="text-2xl font-display font-black tracking-tight">{plan === 'FREE' ? 'GPT-4o-mini' : 'GPT-4o'}</div>
-                                    <p className="text-[10px] opacity-70 font-medium tracking-wide leading-relaxed uppercase">Optimized for high-fidelity industrial extraction architecture.</p>
+                                    <div className="text-3xl font-outfit font-black tracking-tight relative z-10">{plan === 'FREE' ? 'GPT-4o-mini' : 'GPT-4o'}</div>
+                                    <p className="text-[10px] opacity-70 font-semibold tracking-wide leading-relaxed uppercase relative z-10">Optimized for high-fidelity industrial extraction architecture.</p>
                                 </div>
                             </div>
                         </div>
@@ -368,25 +403,25 @@ function NewProjectContent() {
                                 <div className="grid md:grid-cols-2 gap-16 relative z-10">
                                     <div className="space-y-2">
                                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Studio Configuration</span>
-                                        <p className="text-2xl font-display font-black text-slate-900 leading-tight">{formData.name}</p>
+                                        <p className="text-2xl font-outfit font-black text-slate-900 leading-tight">{formData.name}</p>
                                     </div>
                                     <div className="space-y-2">
                                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Model Architecture</span>
-                                        <div className="flex items-center gap-3 text-2xl font-display font-black text-indigo-600">
+                                        <div className="flex items-center gap-3 text-2xl font-outfit font-black text-indigo-600">
                                             <Zap className="w-6 h-6 fill-indigo-100" />
                                             {selectedTemplate?.name} Intelligence
                                         </div>
                                     </div>
                                     <div className="space-y-2">
                                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Resource Tier</span>
-                                        <div className="flex items-center gap-3 text-2xl font-display font-black text-slate-900">
+                                        <div className="flex items-center gap-3 text-2xl font-outfit font-black text-slate-900">
                                             {plan === 'FREE' ? <Badge className="bg-slate-100 text-slate-600">Free</Badge> : <Badge className="bg-indigo-600 text-white border-none">PRO (BYO)</Badge>}
                                             <span className="text-slate-400 font-medium">/ {plan === 'FREE' ? '50 Pg' : 'Unlimited'}</span>
                                         </div>
                                     </div>
                                     <div className="space-y-2">
                                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Extraction Engine</span>
-                                        <p className="text-2xl font-display font-black text-slate-900">{plan === 'FREE' ? 'GPT-4o-mini' : 'GPT-4o'}</p>
+                                        <p className="text-2xl font-outfit font-black text-slate-900">{plan === 'FREE' ? 'GPT-4o-mini' : 'GPT-4o'}</p>
                                     </div>
                                 </div>
 

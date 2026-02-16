@@ -71,7 +71,7 @@ export default function VerticalCard({
 
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-3xl font-display font-black text-slate-900 group-hover:text-indigo-600 transition-colors leading-tight">
+                        <h3 className="text-3xl font-outfit font-black text-slate-900 group-hover:text-indigo-600 transition-colors leading-tight">
                             {title}
                         </h3>
                     </div>

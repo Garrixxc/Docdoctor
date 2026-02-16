@@ -4,6 +4,8 @@ import { canReviewRecords } from '@/lib/auth/rbac';
 import { prisma } from '@/lib/db';
 import { Prisma } from '@prisma/client';
 
+export const dynamic = 'force-dynamic';
+
 export async function PATCH(
     request: NextRequest,
     { params }: { params: Promise<{ id: string; fieldId: string }> }

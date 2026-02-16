@@ -64,34 +64,31 @@ async function main() {
     }
 
     console.log('Seeding demo user and workspace...');
-    const emails = ['demo@docdoctor.app', 'gaurav.salvi411@gmail.com'];
+    const email = 'gaurav.salvi411@gmail.com';
+    const user = await prisma.user.upsert({
+        where: { email },
+        update: {},
+        create: {
+            email,
+            name: 'Gaurav Salvi',
+        },
+    });
 
-    for (const email of emails) {
-        const user = await prisma.user.upsert({
-            where: { email },
-            update: {},
-            create: {
-                email,
-                name: email.includes('gaurav') ? 'Gaurav Salvi' : 'Demo User',
-            },
-        });
-
-        await prisma.workspace.upsert({
-            where: { slug: email.includes('gaurav') ? 'gaurav-workspace' : 'demo-workspace' },
-            update: {},
-            create: {
-                name: email.includes('gaurav') ? 'Gaurav Workspace' : 'Demo Workspace',
-                slug: email.includes('gaurav') ? 'gaurav-workspace' : 'demo-workspace',
-                tier: 'FREE',
-                memberships: {
-                    create: {
-                        userId: user.id,
-                        role: 'OWNER',
-                    },
+    const workspace = await prisma.workspace.upsert({
+        where: { slug: 'gaurav-workspace' },
+        update: {},
+        create: {
+            name: 'Gaurav Workspace',
+            slug: 'gaurav-workspace',
+            tier: 'FREE',
+            memberships: {
+                create: {
+                    userId: user.id,
+                    role: 'OWNER',
                 },
             },
-        });
-    }
+        },
+    });
 
     console.log('Seed completed successfully!');
 }
