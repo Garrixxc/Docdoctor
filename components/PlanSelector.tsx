@@ -57,7 +57,7 @@ export default function PlanSelector({ value, onChange }: PlanSelectorProps) {
                     )}
                 >
                     {value === plan.id && (
-                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full shadow-lg">
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full shadow-lg">
                             Selected Plan
                         </div>
                     )}
@@ -71,13 +71,13 @@ export default function PlanSelector({ value, onChange }: PlanSelectorProps) {
                                 <plan.icon className="w-6 h-6" />
                             </div>
                             <div className="text-right">
-                                <div className="text-2xl font-black text-gray-900 leading-none">{plan.price}</div>
+                                <div className="text-2xl font-bold text-gray-900 leading-none">{plan.price}</div>
                                 <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">{plan.period}</div>
                             </div>
                         </div>
 
                         <div className="space-y-1">
-                            <h3 className="text-xl font-extrabold text-gray-900">{plan.title}</h3>
+                            <h3 className="text-xl font-bold text-gray-900">{plan.title}</h3>
                             <p className="text-sm text-gray-500 font-medium leading-relaxed">{plan.description}</p>
                         </div>
 

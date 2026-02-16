@@ -49,6 +49,9 @@ const config: Config = {
                 md: "calc(var(--radius) - 2px)",
                 sm: "calc(var(--radius) - 4px)",
             },
+            boxShadow: {
+                glass: "0 8px 32px 0 rgba(31, 38, 135, 0.07)",
+            },
             fontFamily: {
                 sans: ["var(--font-inter)", "Inter", "sans-serif"],
                 outfit: ["var(--font-outfit)", "Outfit", "sans-serif"],

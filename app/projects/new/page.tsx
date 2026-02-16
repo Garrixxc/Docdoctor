@@ -35,6 +35,7 @@ function NewProjectContent() {
     const [templates, setTemplates] = useState<Template[]>([]);
     const [loading, setLoading] = useState(false);
     const [plan, setPlan] = useState<'FREE' | 'BYO'>('FREE');
+    const [workspaceId, setWorkspaceId] = useState<string | null>(null);
 
     // Form data
     const [formData, setFormData] = useState({
@@ -45,7 +46,20 @@ function NewProjectContent() {
 
     useEffect(() => {
         fetchTemplates();
+        fetchWorkspace();
     }, []);
+
+    async function fetchWorkspace() {
+        try {
+            const res = await fetch('/api/usage');
+            const data = await res.json();
+            if (data.workspace?.id) {
+                setWorkspaceId(data.workspace.id);
+            }
+        } catch (err) {
+            console.error('Failed to fetch workspace:', err);
+        }
+    }
 
     async function fetchTemplates() {
         try {
@@ -109,6 +123,7 @@ function NewProjectContent() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    workspaceId,
                     name: formData.name,
                     templateId: formData.templateId,
                     requirements: formData.requirements,
@@ -469,7 +484,7 @@ function NewProjectContent() {
                             </Button>
                             <Button
                                 onClick={handleSubmit}
-                                disabled={loading}
+                                disabled={loading || !workspaceId}
                                 className="h-20 px-16 rounded-[1.25rem] text-xl font-bold bg-indigo-600 hover:bg-slate-900 text-white shadow-xl shadow-indigo-100 hover:translate-y-[-4px] active:scale-95 transition-all flex items-center gap-4"
                             >
                                 {loading ? (
