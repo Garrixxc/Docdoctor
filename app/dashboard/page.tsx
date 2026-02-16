@@ -31,27 +31,46 @@ export default function DashboardPage() {
     const [workspaceId, setWorkspaceId] = useState<string | null>(null);
 
     useEffect(() => {
+        let isMounted = true;
+
         async function loadData() {
             try {
                 // Get usage and workspace info
                 const usageRes = await fetch('/api/usage');
-                const usageData = await usageRes.json();
-                setUsage(usageData.usage);
-                setWorkspaceId(usageData.workspace.id);
+                if (!usageRes.ok) {
+                    if (usageRes.status === 401) {
+                        router.push('/api/auth/signin');
+                        return;
+                    }
+                    throw new Error(`API error: ${usageRes.status}`);
+                }
 
-                // Get projects
-                const projectsRes = await fetch(`/api/projects?workspaceId=${usageData.workspace.id}`);
-                const projectsData = await projectsRes.json();
-                setProjects(projectsData.projects || []);
+                const usageData = await usageRes.json();
+                if (!usageData.workspace) {
+                    console.warn('Dashboard: No workspace found');
+                    if (isMounted) setLoading(false);
+                    return;
+                }
+
+                if (isMounted) {
+                    setUsage(usageData.usage);
+                    setWorkspaceId(usageData.workspace.id);
+
+                    // Get projects only if we have a workspace
+                    const projectsRes = await fetch(`/api/projects?workspaceId=${usageData.workspace.id}`);
+                    const projectsData = await projectsRes.json();
+                    setProjects(projectsData.projects || []);
+                }
             } catch (error) {
                 console.error('Failed to load dashboard data:', error);
             } finally {
-                setLoading(false);
+                if (isMounted) setLoading(false);
             }
         }
 
         loadData();
-    }, []);
+        return () => { isMounted = false; };
+    }, [router]);
 
     if (loading) {
         return (
