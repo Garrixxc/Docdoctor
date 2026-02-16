@@ -75,19 +75,43 @@ model VerificationToken {
 
 // ============ Multi-Tenancy Models ============
 
-model Workspace {
-  id        String   @id @default(cuid())
-  name      String
-  slug      String   @unique
-  settings  Json?    @default("{}")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum WorkspaceTier {
+  FREE
+  PRO
+}
 
-  memberships Membership[]
-  projects    Project[]
+model Workspace {
+  id        String        @id @default(cuid())
+  name      String
+  slug      String        @unique
+  tier      WorkspaceTier @default(FREE)
+  settings  Json?         @default("{}")
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  memberships  Membership[]
+  projects     Project[]
+  usageRecords UsageRecord[]
 
   @@index([slug])
   @@map("workspaces")
+}
+
+model UsageRecord {
+  id          String   @id @default(cuid())
+  workspaceId String
+  periodStart DateTime // First day of the month
+  pagesUsed   Int      @default(0)
+  runsUsed    Int      @default(0)
+  costAccrued Float    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, periodStart])
+  @@index([workspaceId])
+  @@map("usage_records")
 }
 
 enum MembershipRole {

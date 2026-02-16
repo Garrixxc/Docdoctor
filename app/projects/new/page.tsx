@@ -1,20 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, ArrowRight, Check, Plus, Zap, Brain } from 'lucide-react';
-import TemplateCard from '@/components/TemplateCard';
-import {
-    DEFAULT_SIMPLE_SETTINGS,
-    AVAILABLE_MODELS,
-    AVAILABLE_CHUNKING_METHODS,
-    DEFAULT_ADVANCED_SETTINGS,
-} from '@/types/settings-types';
+import { Progress } from "@/components/ui/progress";
+import { ArrowLeft, ArrowRight, Check, Zap, Brain, ShieldCheck, ChevronRight, Lock } from 'lucide-react';
+import PlanSelector from '@/components/PlanSelector';
+import { cn } from '@/lib/utils/cn';
 
 interface Template {
     id: string;
@@ -25,16 +21,20 @@ interface Template {
 }
 
 const STEPS = [
-    { id: 1, label: 'Template' },
-    { id: 2, label: 'Details' },
-    { id: 3, label: 'Settings' },
+    { id: 1, label: 'Choose Plan' },
+    { id: 2, label: 'Project Details' },
+    { id: 3, label: 'Confirm' },
 ];
 
-export default function NewProjectPage() {
+function NewProjectContent() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const templateSlugFromUrl = searchParams.get('template');
+
     const [step, setStep] = useState(1);
     const [templates, setTemplates] = useState<Template[]>([]);
     const [loading, setLoading] = useState(false);
+    const [plan, setPlan] = useState<'FREE' | 'BYO'>('FREE');
 
     // Form data
     const [formData, setFormData] = useState({
@@ -42,18 +42,6 @@ export default function NewProjectPage() {
         templateId: '',
         requirements: {} as any,
     });
-
-    // Settings
-    const [settingsMode, setSettingsMode] = useState<'simple' | 'advanced'>('simple');
-    const [costVsAccuracy, setCostVsAccuracy] = useState(DEFAULT_SIMPLE_SETTINGS.costVsAccuracy);
-    const [speedVsThoroughness, setSpeedVsThoroughness] = useState(DEFAULT_SIMPLE_SETTINGS.speedVsThoroughness);
-    const [chunkingMethod, setChunkingMethod] = useState(DEFAULT_ADVANCED_SETTINGS.chunkingMethod);
-    const [chunkSize, setChunkSize] = useState(DEFAULT_ADVANCED_SETTINGS.chunkSize);
-    const [overlap, setOverlap] = useState(DEFAULT_ADVANCED_SETTINGS.overlap);
-    const [model, setModel] = useState(DEFAULT_ADVANCED_SETTINGS.model);
-    const [autoAcceptThreshold, setAutoAcceptThreshold] = useState(DEFAULT_ADVANCED_SETTINGS.autoAcceptThreshold);
-    const [needsReviewThreshold, setNeedsReviewThreshold] = useState(DEFAULT_ADVANCED_SETTINGS.needsReviewThreshold);
-    const [maxCostPerRun, setMaxCostPerRun] = useState<string>('');
 
     useEffect(() => {
         fetchTemplates();
@@ -63,7 +51,16 @@ export default function NewProjectPage() {
         try {
             const res = await fetch('/api/templates');
             const data = await res.json();
-            setTemplates(data.templates || []);
+            const fetchedTemplates = data.templates || [];
+            setTemplates(fetchedTemplates);
+
+            // Pre-select template if slug in URL
+            if (templateSlugFromUrl) {
+                const found = fetchedTemplates.find((t: Template) => t.slug === templateSlugFromUrl);
+                if (found) {
+                    setFormData(prev => ({ ...prev, templateId: found.id }));
+                }
+            }
         } catch (err) {
             console.error('Failed to fetch templates:', err);
         }
@@ -74,32 +71,38 @@ export default function NewProjectPage() {
     async function handleSubmit() {
         setLoading(true);
         try {
-            // Build extraction settings
-            const extractionSettings: any = { settingsMode };
+            // Build extraction settings based on plan
+            let extractionSettings: any = {};
 
-            if (settingsMode === 'simple') {
-                extractionSettings.costVsAccuracy = costVsAccuracy;
-                extractionSettings.speedVsThoroughness = speedVsThoroughness;
-                // Map simple → advanced
-                const mappedModel = costVsAccuracy <= 30 ? 'gpt-4o-mini' : costVsAccuracy <= 70 ? 'gpt-4o' : 'gpt-4-turbo';
-                extractionSettings.model = mappedModel;
-                extractionSettings.chunkingMethod = speedVsThoroughness ? 'by_pages' : 'headings';
-                extractionSettings.chunkSize = speedVsThoroughness ? 6000 : 3000;
-                extractionSettings.overlap = speedVsThoroughness ? 100 : 300;
-                extractionSettings.temperature = 0.1;
-                extractionSettings.autoAcceptThreshold = costVsAccuracy > 50 ? 0.92 : 0.95;
-                extractionSettings.needsReviewThreshold = costVsAccuracy > 50 ? 0.65 : 0.7;
-                extractionSettings.maxCostPerRun = costVsAccuracy <= 30 ? 5.0 : costVsAccuracy <= 70 ? 15.0 : null;
+            if (plan === 'FREE') {
+                extractionSettings = {
+                    settingsMode: 'simple',
+                    costVsAccuracy: 0, // Maps to gpt-4o-mini
+                    speedVsThoroughness: true,
+                    model: 'gpt-4o-mini',
+                    chunkingMethod: 'by_pages',
+                    chunkSize: 6000,
+                    overlap: 100,
+                    temperature: 0.1,
+                    autoAcceptThreshold: 0.95,
+                    needsReviewThreshold: 0.7,
+                    maxCostPerRun: null, // Limit is handled by orchestrator usage-tracker
+                    apiKeyMode: 'PLATFORM'
+                };
             } else {
-                extractionSettings.chunkingMethod = chunkingMethod;
-                extractionSettings.chunkSize = chunkSize;
-                extractionSettings.overlap = overlap;
-                extractionSettings.provider = 'openai';
-                extractionSettings.model = model;
-                extractionSettings.temperature = 0.1;
-                extractionSettings.autoAcceptThreshold = autoAcceptThreshold;
-                extractionSettings.needsReviewThreshold = needsReviewThreshold;
-                extractionSettings.maxCostPerRun = maxCostPerRun ? Number(maxCostPerRun) : null;
+                extractionSettings = {
+                    settingsMode: 'advanced', // Defaults for BYO but user can change later in project settings
+                    chunkingMethod: 'headings',
+                    chunkSize: 3000,
+                    overlap: 300,
+                    provider: 'openai',
+                    model: 'gpt-4o',
+                    temperature: 0.1,
+                    autoAcceptThreshold: 0.92,
+                    needsReviewThreshold: 0.65,
+                    maxCostPerRun: null,
+                    apiKeyMode: 'WORKSPACE' // Expects key to be set at workspace level
+                };
             }
 
             const res = await fetch('/api/projects', {
@@ -125,74 +128,74 @@ export default function NewProjectPage() {
     }
 
     return (
-        <div className="container mx-auto px-4 py-8 max-w-4xl">
-            <div className="flex items-center gap-3 mb-8">
-                <Button variant="ghost" size="icon" onClick={() => router.back()}>
-                    <ArrowLeft className="w-4 h-4" />
-                </Button>
-                <div>
-                    <h1 className="text-3xl font-bold">Create New Project</h1>
-                    <p className="text-gray-500 text-sm mt-1">Configure your document extraction pipeline</p>
+        <div className="container mx-auto px-4 py-8 max-w-5xl">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+                <div className="flex items-center gap-4">
+                    <Button variant="ghost" size="icon" onClick={() => router.back()} className="rounded-full hover:bg-white border-transparent hover:border-gray-100">
+                        <ArrowLeft className="w-5 h-5" />
+                    </Button>
+                    <div>
+                        <h1 className="text-4xl font-black text-gray-900 tracking-tight">New Extraction Project</h1>
+                        <p className="text-gray-500 font-medium">Configure your industrial datasets studio</p>
+                    </div>
+                </div>
+
+                {/* Progress Visual */}
+                <div className="flex flex-col gap-2 min-w-[200px]">
+                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-blue-600">
+                        <span>Step {step} of 3</span>
+                        <span>{Math.round((step / 3) * 100)}%</span>
+                    </div>
+                    <Progress value={(step / 3) * 100} className="h-2 rounded-full" />
                 </div>
             </div>
 
-            {/* Progress Steps */}
-            <div className="flex items-center justify-center gap-2 mb-10">
+            {/* Steps Navigation Sidebar / Top */}
+            <div className="flex flex-wrap items-center gap-3 mb-12">
                 {STEPS.map((s, i) => (
-                    <div key={s.id} className="flex items-center gap-2">
+                    <div key={s.id} className="flex items-center gap-3">
                         <button
-                            onClick={() => {
-                                if (s.id < step) setStep(s.id);
-                            }}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${s.id === step
-                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
+                            onClick={() => { if (s.id < step) setStep(s.id); }}
+                            className={cn(
+                                "flex items-center gap-3 px-6 py-3 rounded-2xl text-sm font-bold transition-all border-2",
+                                s.id === step
+                                    ? "bg-white border-blue-600 text-blue-600 shadow-xl shadow-blue-500/10"
                                     : s.id < step
-                                        ? 'bg-green-100 text-green-700 cursor-pointer hover:bg-green-200'
-                                        : 'bg-gray-100 text-gray-400'
-                                }`}
-                        >
-                            {s.id < step ? (
-                                <Check className="w-4 h-4" />
-                            ) : (
-                                <span className="w-5 h-5 rounded-full bg-current/10 flex items-center justify-center text-xs">
-                                    {s.id}
-                                </span>
+                                        ? "bg-blue-50 border-transparent text-blue-700 hover:bg-blue-100"
+                                        : "bg-white border-gray-100 text-gray-400 opacity-60 pointer-events-none"
                             )}
+                        >
+                            <span className={cn(
+                                "w-6 h-6 rounded-full flex items-center justify-center text-[10px]",
+                                s.id === step ? "bg-blue-600 text-white" : s.id < step ? "bg-blue-200 text-blue-700" : "bg-gray-100 text-gray-400"
+                            )}>
+                                {s.id < step ? <Check className="w-3 h-3" /> : s.id}
+                            </span>
                             {s.label}
                         </button>
-                        {i < STEPS.length - 1 && (
-                            <div className={`w-12 h-0.5 ${s.id < step ? 'bg-green-400' : 'bg-gray-200'}`} />
-                        )}
+                        {i < STEPS.length - 1 && <ChevronRight className="w-4 h-4 text-gray-300" />}
                     </div>
                 ))}
             </div>
 
-            {/* Step 1: Template Selection */}
+            {/* Step 1: Plan Selection */}
             {step === 1 && (
-                <div>
-                    <h2 className="text-xl font-semibold mb-2">Choose a Template</h2>
-                    <p className="text-gray-500 text-sm mb-6">
-                        Select the document type you want to extract data from
-                    </p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                        {templates.map((template) => (
-                            <TemplateCard
-                                key={template.id}
-                                template={template}
-                                selected={formData.templateId === template.id}
-                                onClick={() =>
-                                    setFormData({ ...formData, templateId: template.id })
-                                }
-                            />
-                        ))}
+                <div className="space-y-8 animate-slide-up">
+                    <div className="text-center space-y-4 max-w-2xl mx-auto mb-10">
+                        <h2 className="text-3xl font-black text-gray-900">Choose your processing plan</h2>
+                        <p className="text-gray-500 font-medium">Use our community defaults or unlock ultimate scale with your own API key.</p>
                     </div>
-                    <div className="flex justify-end">
+
+                    <PlanSelector value={plan} onChange={setPlan} />
+
+                    <div className="flex justify-end pt-8">
                         <Button
                             onClick={() => setStep(2)}
-                            disabled={!formData.templateId}
-                            className="min-w-[140px]"
+                            size="lg"
+                            className="h-14 px-10 rounded-2xl text-lg font-bold shadow-xl shadow-blue-500/10"
                         >
-                            Next <ArrowRight className="w-4 h-4 ml-1" />
+                            Configure Project <ArrowRight className="w-5 h-5 ml-2" />
                         </Button>
                     </div>
                 </div>
@@ -200,261 +203,221 @@ export default function NewProjectPage() {
 
             {/* Step 2: Project Details */}
             {step === 2 && (
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Project Details</CardTitle>
-                        <CardDescription>
-                            Name your project and set requirements for{' '}
-                            <span className="font-medium text-blue-600">
-                                {selectedTemplate?.name || 'your template'}
-                            </span>
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                        <div>
-                            <Label htmlFor="name">Project Name</Label>
-                            <Input
-                                id="name"
-                                value={formData.name}
-                                onChange={(e) =>
-                                    setFormData({ ...formData, name: e.target.value })
-                                }
-                                placeholder="e.g., Q1 2025 Vendor Review"
-                                className="mt-1"
-                            />
-                        </div>
-
-                        {/* Dynamic requirements based on template */}
-                        {selectedTemplate?.slug === 'coi' && (
-                            <div className="space-y-4">
-                                <h3 className="font-medium text-sm text-gray-700">
-                                    Compliance Requirements (optional)
-                                </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <Label htmlFor="minLiability">Min Liability per Occurrence ($)</Label>
-                                        <Input
-                                            id="minLiability"
-                                            type="number"
-                                            value={formData.requirements.minLiabilityPerOccurrence || ''}
-                                            onChange={(e) =>
-                                                setFormData({
-                                                    ...formData,
-                                                    requirements: {
-                                                        ...formData.requirements,
-                                                        minLiabilityPerOccurrence: Number(e.target.value),
-                                                    },
-                                                })
-                                            }
-                                            placeholder="e.g., 1000000"
-                                            className="mt-1"
-                                        />
-                                    </div>
-                                    <div>
-                                        <Label htmlFor="minAggregate">Min Aggregate ($)</Label>
-                                        <Input
-                                            id="minAggregate"
-                                            type="number"
-                                            value={formData.requirements.minGeneralAggregate || ''}
-                                            onChange={(e) =>
-                                                setFormData({
-                                                    ...formData,
-                                                    requirements: {
-                                                        ...formData.requirements,
-                                                        minGeneralAggregate: Number(e.target.value),
-                                                    },
-                                                })
-                                            }
-                                            placeholder="e.g., 2000000"
-                                            className="mt-1"
-                                        />
-                                    </div>
+                <div className="grid lg:grid-cols-3 gap-12 animate-slide-up">
+                    <div className="lg:col-span-2 space-y-8">
+                        <section className="space-y-6">
+                            <h2 className="text-3xl font-black text-gray-900">Project Details</h2>
+                            <div className="grid gap-6">
+                                <div className="space-y-3">
+                                    <Label htmlFor="name" className="text-base font-bold text-gray-700">Name your dataset collection</Label>
+                                    <Input
+                                        id="name"
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        placeholder="e.g., Q1 2026 COI Compliance Review"
+                                        className="h-14 px-6 rounded-2xl text-lg border-2 focus-visible:ring-blue-500/20"
+                                    />
+                                    <p className="text-xs text-gray-400 font-medium ml-2 uppercase tracking-wide">Enter a unique name to identify your project results</p>
                                 </div>
                             </div>
-                        )}
+                        </section>
 
-                        <div className="flex justify-between pt-4">
-                            <Button variant="outline" onClick={() => setStep(1)}>
-                                <ArrowLeft className="w-4 h-4 mr-1" /> Back
+                        <section className="space-y-6">
+                            <h2 className="text-2xl font-black text-gray-900">Industrial Requirements</h2>
+                            {selectedTemplate ? (
+                                <div className="p-8 rounded-[2rem] bg-gray-50/50 border-2 border-dashed border-gray-200 space-y-8">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center text-white">
+                                            <Zap className="w-6 h-6" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-bold text-gray-900">Configuring for {selectedTemplate.name}</h4>
+                                            <p className="text-sm text-gray-500 font-medium">{selectedTemplate.category} Vertical</p>
+                                        </div>
+                                    </div>
+
+                                    {selectedTemplate.slug === 'coi' && (
+                                        <div className="grid md:grid-cols-2 gap-6">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="minLiability" className="text-xs font-black uppercase tracking-widest text-gray-500">Min Liability ($)</Label>
+                                                <Input
+                                                    id="minLiability"
+                                                    type="number"
+                                                    value={formData.requirements.minLiabilityPerOccurrence || ''}
+                                                    onChange={(e) => setFormData({
+                                                        ...formData,
+                                                        requirements: { ...formData.requirements, minLiabilityPerOccurrence: Number(e.target.value) }
+                                                    })}
+                                                    placeholder="1,000,000"
+                                                    className="h-12 px-4 rounded-xl border-2"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="minAggregate" className="text-xs font-black uppercase tracking-widest text-gray-500">Min Aggregate ($)</Label>
+                                                <Input
+                                                    id="minAggregate"
+                                                    type="number"
+                                                    value={formData.requirements.minGeneralAggregate || ''}
+                                                    onChange={(e) => setFormData({
+                                                        ...formData,
+                                                        requirements: { ...formData.requirements, minGeneralAggregate: Number(e.target.value) }
+                                                    })}
+                                                    placeholder="2,000,000"
+                                                    className="h-12 px-4 rounded-xl border-2"
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {selectedTemplate.slug !== 'coi' && (
+                                        <div className="flex items-center justify-center py-6 text-center">
+                                            <p className="text-gray-400 text-sm font-medium italic">No custom requirements needed for this vertical.<br />Standard extraction fields will be used.</p>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <div className="p-8 rounded-[2rem] bg-gray-50 text-center border-2 border-dashed border-gray-200">
+                                    <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">Loading Template Configuration...</p>
+                                </div>
+                            )}
+                        </section>
+
+                        <div className="flex justify-between pt-8">
+                            <Button variant="ghost" onClick={() => setStep(1)} className="h-14 px-8 rounded-2xl font-bold">
+                                <ArrowLeft className="w-5 h-5 mr-2" /> Change Plan
                             </Button>
                             <Button
                                 onClick={() => setStep(3)}
-                                disabled={!formData.name}
-                                className="min-w-[140px]"
+                                disabled={!formData.name || !formData.templateId}
+                                className="h-14 px-10 rounded-2xl text-lg font-bold shadow-xl shadow-blue-500/10"
                             >
-                                Next <ArrowRight className="w-4 h-4 ml-1" />
+                                Review Project <ArrowRight className="w-5 h-5 ml-2" />
                             </Button>
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+
+                    {/* Sidebar Summary */}
+                    <div className="space-y-6">
+                        <Card className="rounded-[2.5rem] border-none shadow-2xl shadow-blue-500/5 bg-white overflow-hidden">
+                            <CardHeader className="bg-gray-50/50 border-b border-gray-100">
+                                <CardTitle className="text-lg font-black">Project Summary</CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-6 space-y-6">
+                                <div className="space-y-4">
+                                    <div className="flex justify-between text-xs font-bold uppercase tracking-widest text-gray-400">
+                                        <span>Plan</span>
+                                        <Badge variant="outline" className="text-blue-600 bg-blue-50 border-blue-100">{plan}</Badge>
+                                    </div>
+                                    <div className="flex justify-between text-xs font-bold uppercase tracking-widest text-gray-400">
+                                        <span>Vertical</span>
+                                        <span className="text-gray-900">{selectedTemplate?.name || '---'}</span>
+                                    </div>
+                                    <div className="flex justify-between text-xs font-bold uppercase tracking-widest text-gray-400">
+                                        <span>Pages / Mo</span>
+                                        <span className="text-gray-900 font-black">{plan === 'FREE' ? '50' : 'Unlimited'}</span>
+                                    </div>
+                                </div>
+                                <div className="p-4 rounded-2xl bg-blue-600 text-white space-y-2">
+                                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest opacity-80">
+                                        <Brain className="w-3 h-3" />
+                                        Default Model
+                                    </div>
+                                    <div className="text-lg font-black">{plan === 'FREE' ? 'GPT-4o-mini' : 'GPT-4o'}</div>
+                                    <p className="text-[10px] opacity-70 font-medium">Higher accuracy for complex layouts.</p>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </div>
             )}
 
-            {/* Step 3: Settings */}
+            {/* Step 3: Confirmation */}
             {step === 3 && (
-                <Card>
-                    <CardHeader>
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <CardTitle>Extraction Settings</CardTitle>
-                                <CardDescription>
-                                    Configure how documents are processed
-                                </CardDescription>
+                <div className="max-w-3xl mx-auto space-y-12 animate-slide-up">
+                    <div className="text-center space-y-4">
+                        <div className="w-20 h-20 rounded-3xl bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-green-500/10">
+                            <ShieldCheck className="w-10 h-10" />
+                        </div>
+                        <h2 className="text-4xl font-black text-gray-900">Ready to go!</h2>
+                        <p className="text-gray-500 text-lg font-medium">Review your project configuration before starting the studio.</p>
+                    </div>
+
+                    <div className="grid gap-4">
+                        <div className="p-8 rounded-[2.5rem] bg-white border border-gray-100 shadow-xl space-y-8">
+                            <div className="grid md:grid-cols-2 gap-12">
+                                <div className="space-y-1">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Project Name</span>
+                                    <p className="text-xl font-black text-gray-900">{formData.name}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Extraction Vertical</span>
+                                    <p className="text-xl font-black text-blue-600">{selectedTemplate?.name}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Selected Plan</span>
+                                    <div className="flex items-center gap-2 text-xl font-black text-gray-900">
+                                        {plan === 'FREE' ? <Zap className="w-5 h-5 text-amber-500 fill-amber-500" /> : <ShieldCheck className="w-5 h-5 text-indigo-600" />}
+                                        {plan === 'FREE' ? 'Free Tier' : 'BYO Key'}
+                                    </div>
+                                </div>
+                                <div className="space-y-1">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Monthly Limit</span>
+                                    <p className="text-xl font-black text-gray-900">{plan === 'FREE' ? '50 Pages' : 'Unlimited'}</p>
+                                </div>
                             </div>
-                            <div className="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
-                                <button
-                                    className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${settingsMode === 'simple'
-                                            ? 'bg-white dark:bg-gray-700 shadow text-blue-600'
-                                            : 'text-gray-500 hover:text-gray-700'
-                                        }`}
-                                    onClick={() => setSettingsMode('simple')}
-                                >
-                                    <Zap className="w-3.5 h-3.5 inline mr-1" />
-                                    Simple
-                                </button>
-                                <button
-                                    className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${settingsMode === 'advanced'
-                                            ? 'bg-white dark:bg-gray-700 shadow text-blue-600'
-                                            : 'text-gray-500 hover:text-gray-700'
-                                        }`}
-                                    onClick={() => setSettingsMode('advanced')}
-                                >
-                                    <Brain className="w-3.5 h-3.5 inline mr-1" />
-                                    Advanced
-                                </button>
+
+                            <div className="h-[1px] bg-gray-50 flex items-center justify-center">
+                                <div className="bg-white px-4 text-[10px] font-black text-gray-300 uppercase tracking-widest">Advanced Details</div>
+                            </div>
+
+                            <div className="grid md:grid-cols-3 gap-6">
+                                <div className="p-4 rounded-2xl bg-gray-50 text-center">
+                                    <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 block mb-1">Model</span>
+                                    <span className="text-sm font-bold text-gray-700">{plan === 'FREE' ? 'gpt-4o-mini' : 'gpt-4o'}</span>
+                                </div>
+                                <div className="p-4 rounded-2xl bg-gray-50 text-center">
+                                    <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 block mb-1">Chunking</span>
+                                    <span className="text-sm font-bold text-gray-700">{plan === 'FREE' ? 'by_pages' : 'headings'}</span>
+                                </div>
+                                <div className="p-4 rounded-2xl bg-gray-50 text-center">
+                                    <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 block mb-1">Export</span>
+                                    <span className="text-sm font-bold text-gray-700">{plan === 'FREE' ? 'CSV' : 'CSV, JSON'}</span>
+                                </div>
                             </div>
                         </div>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                        {settingsMode === 'simple' ? (
-                            <>
-                                {/* Cost vs Accuracy */}
-                                <div>
-                                    <Label className="text-sm font-medium">Cost vs. Accuracy</Label>
-                                    <p className="text-xs text-gray-500 mb-3">
-                                        Lower = faster & cheaper, Higher = more accurate & expensive
-                                    </p>
-                                    <div className="flex items-center gap-4">
-                                        <span className="text-xs text-gray-400 w-16">💰 Economy</span>
-                                        <input
-                                            type="range" min="0" max="100"
-                                            value={costVsAccuracy}
-                                            onChange={(e) => setCostVsAccuracy(Number(e.target.value))}
-                                            className="flex-1 h-2 bg-gradient-to-r from-green-300 via-yellow-300 to-red-300 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                                        />
-                                        <span className="text-xs text-gray-400 w-16 text-right">🎯 Precise</span>
-                                    </div>
-                                    <div className="text-center mt-1">
-                                        <Badge variant="outline" className="text-xs">
-                                            {costVsAccuracy <= 30 ? 'GPT-4o Mini' : costVsAccuracy <= 70 ? 'GPT-4o' : 'GPT-4 Turbo'}
-                                        </Badge>
-                                    </div>
-                                </div>
 
-                                {/* Speed Toggle */}
-                                <div>
-                                    <Label className="text-sm font-medium">Speed vs. Thoroughness</Label>
-                                    <div className="flex gap-4 mt-3">
-                                        <button
-                                            onClick={() => setSpeedVsThoroughness(true)}
-                                            className={`flex-1 p-3 rounded-lg border-2 text-sm transition-all ${speedVsThoroughness ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-gray-200 hover:border-gray-300'
-                                                }`}
-                                        >
-                                            ⚡ Speed<br />
-                                            <span className="text-xs text-gray-500">Page chunks, faster</span>
-                                        </button>
-                                        <button
-                                            onClick={() => setSpeedVsThoroughness(false)}
-                                            className={`flex-1 p-3 rounded-lg border-2 text-sm transition-all ${!speedVsThoroughness ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-gray-200 hover:border-gray-300'
-                                                }`}
-                                        >
-                                            🔬 Thorough<br />
-                                            <span className="text-xs text-gray-500">Heading chunks, detailed</span>
-                                        </button>
-                                    </div>
+                        {plan === 'BYO' && (
+                            <div className="p-4 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shrink-0">
+                                    <Lock className="w-5 h-5" />
                                 </div>
-                            </>
-                        ) : (
-                            <>
-                                {/* Advanced Chunking */}
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div>
-                                        <Label className="text-sm font-medium">Chunking Method</Label>
-                                        <select
-                                            value={chunkingMethod}
-                                            onChange={(e) => setChunkingMethod(e.target.value as any)}
-                                            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-900 dark:border-gray-600"
-                                        >
-                                            {AVAILABLE_CHUNKING_METHODS.map((m) => (
-                                                <option key={m.value} value={m.value}>{m.label}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <Label className="text-sm font-medium">Chunk Size</Label>
-                                        <Input type="number" value={chunkSize} onChange={(e) => setChunkSize(Number(e.target.value))} className="mt-1" min={500} max={16000} />
-                                    </div>
-                                    <div>
-                                        <Label className="text-sm font-medium">Overlap</Label>
-                                        <Input type="number" value={overlap} onChange={(e) => setOverlap(Number(e.target.value))} className="mt-1" min={0} max={2000} />
-                                    </div>
-                                </div>
-
-                                {/* Model & Cost */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <Label className="text-sm font-medium">Model</Label>
-                                        <select
-                                            value={model}
-                                            onChange={(e) => setModel(e.target.value)}
-                                            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-900 dark:border-gray-600"
-                                        >
-                                            {AVAILABLE_MODELS.map((m) => (
-                                                <option key={m.value} value={m.value}>{m.label}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <Label className="text-sm font-medium">Max Cost per Run ($)</Label>
-                                        <Input type="number" value={maxCostPerRun} onChange={(e) => setMaxCostPerRun(e.target.value)} placeholder="No limit" className="mt-1" min={0} step={0.5} />
-                                    </div>
-                                </div>
-
-                                {/* Thresholds */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <Label className="text-sm font-medium">Auto-Accept: {autoAcceptThreshold.toFixed(2)}</Label>
-                                        <input type="range" min="0.5" max="1.0" step="0.01" value={autoAcceptThreshold} onChange={(e) => setAutoAcceptThreshold(Number(e.target.value))} className="w-full mt-2 h-2 rounded-lg appearance-none cursor-pointer accent-green-600 bg-gray-200" />
-                                    </div>
-                                    <div>
-                                        <Label className="text-sm font-medium">Needs Review: {needsReviewThreshold.toFixed(2)}</Label>
-                                        <input type="range" min="0.1" max="0.9" step="0.01" value={needsReviewThreshold} onChange={(e) => setNeedsReviewThreshold(Number(e.target.value))} className="w-full mt-2 h-2 rounded-lg appearance-none cursor-pointer accent-amber-600 bg-gray-200" />
-                                    </div>
-                                </div>
-                            </>
+                                <p className="text-sm font-medium text-indigo-700">Make sure you have added your OpenAI API key in Workspace Settings to run this project.</p>
+                            </div>
                         )}
+                    </div>
 
-                        <div className="flex justify-between pt-4">
-                            <Button variant="outline" onClick={() => setStep(2)}>
-                                <ArrowLeft className="w-4 h-4 mr-1" /> Back
-                            </Button>
-                            <Button
-                                onClick={handleSubmit}
-                                disabled={loading}
-                                className="min-w-[160px]"
-                            >
-                                {loading ? (
-                                    'Creating...'
-                                ) : (
-                                    <>
-                                        <Plus className="w-4 h-4 mr-1" />
-                                        Create Project
-                                    </>
-                                )}
-                            </Button>
-                        </div>
-                    </CardContent>
-                </Card>
+                    <div className="flex justify-between items-center">
+                        <Button variant="ghost" onClick={() => setStep(2)} className="h-14 px-8 rounded-2xl font-bold">
+                            <ArrowLeft className="w-5 h-5 mr-2" /> Back to Details
+                        </Button>
+                        <Button
+                            onClick={handleSubmit}
+                            disabled={loading}
+                            className="h-14 px-12 rounded-2xl text-xl font-black bg-blue-600 hover:bg-blue-700 shadow-2xl shadow-blue-500/20 active:scale-95 transition-all"
+                        >
+                            {loading ? "Creating Studio..." : "Launch Project"}
+                        </Button>
+                    </div>
+                </div>
             )}
         </div>
+    );
+}
+
+export default function NewProjectPage() {
+    return (
+        <Suspense fallback={<div>Loading wizard...</div>}>
+            <NewProjectContent />
+        </Suspense>
     );
 }

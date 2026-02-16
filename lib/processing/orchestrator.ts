@@ -1,7 +1,7 @@
 // Processing orchestrator - state machine for document extraction
 
 import { RunStatus, StepStatus } from '@prisma/client';
-import { prisma } from '@/lib/db';
+import { prisma as db } from '@/lib/db';
 import { parseDocument } from './parser';
 import { PageChunker } from './chunkers/by-pages';
 import { FixedTokenChunker } from './chunkers/fixed-tokens';
@@ -9,6 +9,7 @@ import { HeadingChunker } from './chunkers/headings';
 import { validateExtraction } from './validator';
 import { ProviderFactory } from '@/lib/llm/provider-factory';
 import { checkCostGuardrail } from '@/lib/utils/cost-guardrail';
+import { checkUsageLimit, incrementUsage } from '@/lib/utils/usage-tracker';
 import logger from '@/lib/utils/logger';
 
 export class ProcessingOrchestrator {
@@ -19,7 +20,7 @@ export class ProcessingOrchestrator {
             await this.updateRunStatus(RunStatus.PROCESSING, { started_at: new Date() });
 
             // Get run details
-            const run = await prisma.run.findUnique({
+            const run = await db.run.findUnique({
                 where: { id: this.runId },
                 include: {
                     project: {
@@ -38,7 +39,7 @@ export class ProcessingOrchestrator {
             const progress = run.progress as any;
             const selectedDocumentIds = progress?.selectedDocumentIds;
 
-            const documents = await prisma.document.findMany({
+            const documents = await db.document.findMany({
                 where: {
                     projectId: run.projectId,
                     status: 'UPLOADED',
@@ -51,10 +52,21 @@ export class ProcessingOrchestrator {
             logger.info({ runId: this.runId, documentCount: documents.length }, 'Starting run');
 
             let totalCost = 0;
+            let totalPagesProcessed = 0;
             const settings = run.settingsSnapshot as any;
             const maxCostPerRun = settings?.maxCostPerRun ?? null;
             const autoAcceptThreshold = settings?.autoAcceptThreshold ?? 0.95;
             const needsReviewThreshold = settings?.needsReviewThreshold ?? 0.7;
+
+            // ===== FREE TIER USAGE CHECK =====
+            const usageLimitError = await checkUsageLimit(run.project.workspaceId, documents.length);
+            if (usageLimitError) {
+                logger.warn({ runId: this.runId, error: usageLimitError }, 'Usage limit exceeded');
+                await this.updateRunStatus(RunStatus.FAILED, {
+                    error_message: usageLimitError,
+                });
+                return;
+            }
 
             for (const document of documents) {
                 // Cost guardrail check before processing each document
@@ -67,11 +79,11 @@ export class ProcessingOrchestrator {
                         maxCost: maxCostPerRun,
                     }, 'Cost guardrail triggered — stopping processing');
 
-                    await prisma.document.update({
+                    await db.document.update({
                         where: { id: document.id },
                         data: { skipReason: costCheck.message || 'Cost limit exceeded' },
                     });
-                    await prisma.run.update({
+                    await db.run.update({
                         where: { id: this.runId },
                         data: { skippedCount: { increment: 1 } },
                     });
@@ -107,6 +119,9 @@ export class ProcessingOrchestrator {
                         }
                     );
 
+                    // Accumulate page count for usage tracking
+                    totalPagesProcessed += parsedDoc.metadata.pageCount || 1;
+
                     // Step 2: Classify document type using template detection keywords
                     const classifyStep = await this.createStep('classify_document', {
                         documentId: document.id,
@@ -123,7 +138,7 @@ export class ProcessingOrchestrator {
                     });
 
                     // Update document with classification results
-                    await prisma.document.update({
+                    await db.document.update({
                         where: { id: document.id },
                         data: {
                             docTypeScore: classification.score,
@@ -141,7 +156,7 @@ export class ProcessingOrchestrator {
                             detectedType: classification.detectedType,
                         }, 'Document skipped due to low classification score');
 
-                        await prisma.document.update({
+                        await db.document.update({
                             where: { id: document.id },
                             data: {
                                 skipReason: `Wrong document type: ${classification.reason}`,
@@ -149,7 +164,7 @@ export class ProcessingOrchestrator {
                         });
 
                         // Increment skipped count
-                        await prisma.run.update({
+                        await db.run.update({
                             where: { id: this.runId },
                             data: { skippedCount: { increment: 1 } },
                         });
@@ -247,7 +262,7 @@ export class ProcessingOrchestrator {
                         const projectRequirements = run.project.requirements as any;
 
                         // Create extraction record
-                        const record = await prisma.extractionRecord.create({
+                        const record = await db.extractionRecord.create({
                             data: {
                                 runId: this.runId,
                                 documentId: document.id,
@@ -279,7 +294,7 @@ export class ProcessingOrchestrator {
                                 fieldStatus = 'NEEDS_REVIEW';
                             }
 
-                            await prisma.extractionField.create({
+                            await db.extractionField.create({
                                 data: {
                                     recordId: record.id,
                                     fieldName,
@@ -319,7 +334,7 @@ export class ProcessingOrchestrator {
                         ];
 
                         // Update record with compliance status
-                        await prisma.extractionRecord.update({
+                        await db.extractionRecord.update({
                             where: { id: record.id },
                             data: {
                                 recordStatus: allFailedRules.length > 0 ? 'NON_COMPLIANT' : complianceResult.recordStatus,
@@ -328,7 +343,7 @@ export class ProcessingOrchestrator {
                         });
 
                         // Increment processed count
-                        await prisma.run.update({
+                        await db.run.update({
                             where: { id: this.runId },
                             data: { processedCount: { increment: 1 } },
                         });
@@ -351,7 +366,10 @@ export class ProcessingOrchestrator {
                 cost_estimate: totalCost,
             });
 
-            logger.info({ runId: this.runId, totalCost }, 'Run completed');
+            // Record usage
+            await incrementUsage(run.project.workspaceId, totalPagesProcessed, totalCost);
+
+            logger.info({ runId: this.runId, totalCost, totalPagesProcessed }, 'Run completed');
         } catch (error: any) {
             logger.error({ runId: this.runId, error: error.message }, 'Run failed');
             await this.updateRunStatus(RunStatus.FAILED, {
@@ -362,7 +380,7 @@ export class ProcessingOrchestrator {
     }
 
     private async createStep(stepName: string, input: any) {
-        return await prisma.runStep.create({
+        return await db.runStep.create({
             data: {
                 runId: this.runId,
                 stepName,
@@ -376,7 +394,7 @@ export class ProcessingOrchestrator {
         stepId: string,
         fn: () => Promise<T>
     ): Promise<T> {
-        await prisma.runStep.update({
+        await db.runStep.update({
             where: { id: stepId },
             data: {
                 status: StepStatus.RUNNING,
@@ -387,7 +405,7 @@ export class ProcessingOrchestrator {
         try {
             const output = await fn();
 
-            await prisma.runStep.update({
+            await db.runStep.update({
                 where: { id: stepId },
                 data: {
                     status: StepStatus.COMPLETED,
@@ -398,7 +416,7 @@ export class ProcessingOrchestrator {
 
             return output;
         } catch (error: any) {
-            await prisma.runStep.update({
+            await db.runStep.update({
                 where: { id: stepId },
                 data: {
                     status: StepStatus.FAILED,
@@ -426,7 +444,7 @@ export class ProcessingOrchestrator {
             data.costEstimate = updates.cost_estimate;
         if (updates.error_message) data.errorMessage = updates.error_message;
 
-        await prisma.run.update({
+        await db.run.update({
             where: { id: this.runId },
             data,
         });
