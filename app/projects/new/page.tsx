@@ -356,7 +356,7 @@ function NewProjectContent() {
                                 <Sparkles className="w-12 h-12 fill-white/20 group-hover:scale-110 transition-transform duration-500" />
                             </div>
                             <div className="space-y-2">
-                                <h2 className="text-5xl font-display font-black text-slate-900 tracking-tighter leading-none">Ready for Orchestration</h2>
+                                <h1 className="text-6xl font-outfit font-black text-slate-900 tracking-tighter leading-none">Project Orchestration</h1>
                                 <p className="text-xl text-slate-500 font-medium">Verify your intelligence parameters before studio deployment.</p>
                             </div>
                         </div>

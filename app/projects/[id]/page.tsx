@@ -214,7 +214,7 @@ export default function ProjectPage() {
                                         <Upload className="w-10 h-10" />
                                     </div>
                                     <div className="space-y-3">
-                                        <h3 className="text-2xl font-display font-black text-slate-900 leading-tight">Augment Studio</h3>
+                                        <h3 className="text-2xl font-outfit font-black text-slate-900 leading-tight">Augment Studio</h3>
                                         <p className="text-sm text-slate-500 font-medium leading-relaxed">Infuse new datasets into your current orchestration stream.</p>
                                     </div>
                                     <label className="block">

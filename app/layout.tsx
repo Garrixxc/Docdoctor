@@ -44,7 +44,7 @@ export default async function RootLayout({
                                         <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-xl shadow-indigo-200 group-hover:rotate-6 transition-transform duration-300">
                                             <Sparkles className="w-5 h-5 fill-white/20" />
                                         </div>
-                                        <span className="font-display font-black text-2xl tracking-tighter text-slate-900">
+                                        <span className="font-outfit font-black text-2xl tracking-tighter text-slate-900">
                                             DocDoctor
                                         </span>
                                     </a>

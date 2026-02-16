@@ -200,7 +200,7 @@ export default function DashboardPage() {
                                         <BarChart3 className="w-6 h-6" />
                                     </div>
                                     <div>
-                                        <h4 className="text-lg font-display font-black text-slate-900 group-hover:text-indigo-600 transition-colors">{project.name}</h4>
+                                        <h4 className="text-lg font-outfit font-black text-slate-900 group-hover:text-indigo-600 transition-colors">{project.name}</h4>
                                         <div className="flex items-center gap-3 mt-1.5">
                                             <Badge className="bg-indigo-100 text-indigo-700 hover:bg-indigo-100 border-none px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider">
                                                 {project.template.name}
