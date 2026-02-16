@@ -1,12 +1,20 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth-options";
 import UsageBanner from "@/components/UsageBanner";
-import { LayoutDashboard, PlusCircle, Settings, LogOut, ChevronDown } from "lucide-react";
+import { LayoutDashboard, PlusCircle, Settings, LogOut, ChevronDown, Sparkles } from "lucide-react";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+    subsets: ["latin"],
+    variable: "--font-inter",
+});
+
+const outfit = Outfit({
+    subsets: ["latin"],
+    variable: "--font-outfit",
+});
 
 export const metadata: Metadata = {
     title: "DocDoctor - Document to Dataset Studio",
@@ -25,30 +33,30 @@ export default async function RootLayout({
     const session = await getServerSession(authOptions);
 
     return (
-        <html lang="en">
-            <body className={`${inter.className} selection:bg-blue-100 selection:text-blue-900`}>
-                <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-50 via-white to-blue-50/30">
+        <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
+            <body className="font-sans selection:bg-indigo-100 selection:text-indigo-900 overflow-x-hidden antialiased">
+                <div className="min-h-screen grid-bg">
                     {session && (
-                        <nav className="sticky top-0 z-50 w-full border-b bg-white/60 backdrop-blur-xl transition-all duration-300">
-                            <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-                                <div className="flex items-center gap-8">
-                                    <a href="/dashboard" className="flex items-center gap-2 group cursor-pointer">
-                                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform">
-                                            <ShieldCheck className="w-5 h-5" />
+                        <nav className="sticky top-0 z-50 w-full border-b border-white/20 bg-white/60 backdrop-blur-2xl transition-all duration-500 after:absolute after:bottom-[-1px] after:left-0 after:w-full after:h-[1px] after:bg-gradient-to-r after:from-transparent after:via-indigo-500/20 after:to-transparent">
+                            <div className="container mx-auto px-6 h-16 flex items-center justify-between">
+                                <div className="flex items-center gap-10">
+                                    <a href="/dashboard" className="flex items-center gap-2.5 group cursor-pointer">
+                                        <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-xl shadow-indigo-200 group-hover:rotate-6 transition-transform duration-300">
+                                            <Sparkles className="w-5 h-5 fill-white/20" />
                                         </div>
-                                        <span className="font-black text-xl tracking-tight bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+                                        <span className="font-display font-black text-2xl tracking-tighter text-slate-900">
                                             DocDoctor
                                         </span>
                                     </a>
 
-                                    <div className="hidden md:flex items-center gap-1">
-                                        <a href="/dashboard" className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 hover:bg-blue-50/50 rounded-lg transition-all active:scale-95">
+                                    <div className="hidden md:flex items-center gap-2">
+                                        <a href="/dashboard" className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-xl transition-all">
                                             <LayoutDashboard className="w-4 h-4" />
                                             Dashboard
                                         </a>
-                                        <a href="/projects/new" className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 hover:bg-blue-50/50 rounded-lg transition-all active:scale-95">
+                                        <a href="/projects/new" className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-xl transition-all">
                                             <PlusCircle className="w-4 h-4" />
-                                            New Project
+                                            Build Project
                                         </a>
                                     </div>
                                 </div>

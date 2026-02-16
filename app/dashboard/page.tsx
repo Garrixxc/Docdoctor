@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Shield, FileText, Users, Clock, ArrowRight, BarChart3, MoreVertical, Search } from 'lucide-react';
+import { Plus, Shield, FileText, Users, Clock, ArrowRight, BarChart3, MoreVertical, Search, Sparkles, Zap } from 'lucide-react';
 import VerticalCard from '@/components/VerticalCard';
 import { cn } from '@/lib/utils/cn';
 
@@ -65,143 +65,179 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="container mx-auto px-4 py-8 space-y-12">
-            {/* Header / Usage Banner */}
-            <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-blue-600 to-indigo-800 p-8 md:p-12 text-white shadow-2xl">
-                <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-400/20 rounded-full blur-2xl translate-y-1/2 -track-x-1/2" />
-
-                <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
-                    <div className="space-y-2">
-                        <h1 className="text-3xl md:text-4xl font-black">Welcome back! 👋</h1>
-                        <p className="text-blue-100/80 font-medium">Ready to extract some datasets today?</p>
+        <div className="container mx-auto px-6 py-10 space-y-16 animate-fade-in relative z-10">
+            {/* Command Center Header */}
+            <div className="grid lg:grid-cols-12 gap-6">
+                <div className="lg:col-span-8 space-y-4">
+                    <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 w-fit">
+                        <Sparkles className="w-3.5 h-3.5 text-indigo-600 animate-glow" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-indigo-600">Command Center</span>
                     </div>
-
-                    <div className="glass border-white/20 bg-white/10 p-6 rounded-3xl min-w-[300px] flex flex-col gap-4">
-                        <div className="flex justify-between items-end">
-                            <span className="text-xs font-bold uppercase tracking-widest text-blue-100">Monthly Usage</span>
-                            <span className="text-2xl font-black">{usage?.pagesUsed || 0} / {usage?.pagesLimit === 'unlimited' ? '∞' : usage?.pagesLimit} <span className="text-xs font-medium opacity-60">pages</span></span>
-                        </div>
-                        <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-                            <div
-                                className="h-full bg-white transition-all duration-1000"
-                                style={{ width: usage?.percentUsed ? `${usage.percentUsed}%` : '0%' }}
-                            />
-                        </div>
-                        <div className="flex justify-between items-center text-[10px] font-bold text-blue-100 uppercase tracking-wide">
-                            <span>{usage?.tier === 'PRO' ? 'PRO Plan' : 'Free Plan'}</span>
-                            {usage?.tier !== 'PRO' && <a href="/workspaces/settings" className="hover:underline flex items-center gap-1">Upgrade <ArrowRight className="w-3 h-3" /></a>}
-                        </div>
+                    <div className="space-y-1">
+                        <h1 className="text-5xl font-display font-black tracking-tighter text-slate-900 leading-none">
+                            Welcome back, <span className="text-indigo-600">Gaurav</span>
+                        </h1>
+                        <p className="text-xl text-slate-500 font-medium">Ready to orchestrate your data extractions today?</p>
                     </div>
+                </div>
+
+                <div className="lg:col-span-4">
+                    {usage && (
+                        <div className="noise glass rounded-[2.5rem] p-8 space-y-6 group hover:translate-y-[-4px] transition-all duration-500">
+                            <div className="flex justify-between items-start">
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Monthly Usage</p>
+                                    <h3 className="text-3xl font-display font-black text-slate-900">
+                                        {usage.pagesUsed}
+                                        <span className="text-sm font-medium text-slate-400 ml-1">/ {usage.pagesLimit === 'unlimited' ? '∞' : usage.pagesLimit} pages</span>
+                                    </h3>
+                                </div>
+                                <div className={cn(
+                                    "px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider",
+                                    usage.tier === 'PRO' ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-600"
+                                )}>
+                                    {usage.tier} Tier
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden p-[2px]">
+                                    <div
+                                        className="h-full bg-indigo-600 rounded-full transition-all duration-1000 ease-out shadow-[0_0_12px_rgba(79,70,229,0.3)]"
+                                        style={{ width: `${usage.percentUsed}%` }}
+                                    />
+                                </div>
+                                <div className="flex justify-between text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                                    <span>{usage.percentUsed}% consumed</span>
+                                    {usage.tier !== 'PRO' && (
+                                        <a href="/workspaces/settings" className="text-indigo-600 hover:underline flex items-center gap-1">
+                                            Scale Up <ArrowRight className="w-2.5 h-2.5" />
+                                        </a>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 
-            {/* Quick Start Section */}
-            <section className="space-y-6">
-                <div className="flex justify-between items-end px-2">
-                    <div className="space-y-1">
-                        <h2 className="text-2xl font-black text-gray-900">Start New Extraction</h2>
-                        <p className="text-sm text-gray-500 font-medium">Select a vertical to create a pre-configured project</p>
-                    </div>
+            {/* Verticals Bento Grid */}
+            <section className="space-y-8">
+                <div className="flex items-center gap-4">
+                    <h2 className="text-2xl font-display font-black tracking-tight text-slate-900">Studio Templates</h2>
+                    <div className="h-[1px] flex-1 bg-slate-100" />
                 </div>
 
-                <div className="grid md:grid-cols-3 gap-8">
-                    <VerticalCard
-                        title="Vendor Compliance"
-                        description="COI validation and vendor tracking."
-                        icon={Shield}
-                        color="blue"
-                        href="/projects/new?template=vendor-compliance"
-                        className="border-none bg-blue-50/50"
-                    />
-                    <VerticalCard
-                        title="Trade Invoices"
-                        description="Trade docs with line-item sum checks."
-                        icon={FileText}
-                        color="emerald"
-                        href="/projects/new?template=trade-invoice"
-                        className="border-none bg-emerald-50/50"
-                    />
-                    <VerticalCard
-                        title="HR & Resumes"
-                        description="Professional resume data extraction."
-                        icon={Users}
-                        color="purple"
-                        href="/projects/new?template=resume"
-                        className="border-none bg-purple-50/50"
-                    />
+                <div className="grid md:grid-cols-12 gap-6 h-auto md:h-[450px]">
+                    <div className="md:col-span-7 h-full">
+                        <VerticalCard
+                            title="Vendor Compliance"
+                            description="Deep validation of Certificate of Insurance docs with COI requirements matching."
+                            icon={Shield}
+                            color="blue"
+                            href="/projects/new?template=vendor-compliance"
+                            className="h-full border-none shadow-none bg-slate-50 relative overflow-hidden group"
+                            badge="High Accuracy"
+                        />
+                    </div>
+                    <div className="md:col-span-5 grid grid-rows-2 gap-6 h-full">
+                        <VerticalCard
+                            title="Trade Invoices"
+                            description="Line-item extraction and tax validation."
+                            icon={FileText}
+                            color="emerald"
+                            href="/projects/new?template=trade-invoice"
+                            className="border-none shadow-none bg-emerald-50 relative overflow-hidden"
+                        />
+                        <VerticalCard
+                            title="HR & Resumes"
+                            description="Structured talent data from PDFs."
+                            icon={Users}
+                            color="purple"
+                            href="/projects/new?template=resume"
+                            className="border-none shadow-none bg-purple-50 relative overflow-hidden"
+                        />
+                    </div>
                 </div>
             </section>
 
-            {/* Existing Projects Table */}
-            <section className="space-y-6">
-                <div className="flex justify-between items-end px-2">
-                    <div className="space-y-1">
-                        <h2 className="text-2xl font-black text-gray-900">Recent Projects</h2>
-                        <p className="text-sm text-gray-500 font-medium">Manage and review your ongoing datasets</p>
+            {/* Project Ledger */}
+            <section className="space-y-8 pb-20">
+                <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-4 flex-1">
+                        <h2 className="text-2xl font-display font-black tracking-tight text-slate-900">Project Ledger</h2>
+                        <div className="h-[1px] flex-1 bg-slate-100" />
                     </div>
-                    <div className="flex gap-2">
-                        <div className="relative hidden sm:block">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+
+                    <div className="flex items-center gap-4 ml-8">
+                        <div className="relative group">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
                             <input
                                 type="text"
-                                placeholder="Search projects..."
-                                className="pl-10 pr-4 h-10 rounded-full border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all w-64"
+                                placeholder="Search the ledger..."
+                                className="pl-11 pr-6 h-12 rounded-2xl bg-slate-50 border-transparent transition-all focus:bg-white focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-100 text-sm font-medium w-64"
                             />
                         </div>
-                        <Button size="icon" variant="outline" className="rounded-full h-10 w-10">
-                            <BarChart3 className="w-4 h-4" />
+                        <Button
+                            onClick={() => router.push('/projects/new')}
+                            className="h-12 px-6 rounded-2xl font-black bg-slate-900 hover:bg-slate-800 text-white shadow-xl shadow-slate-200 transition-all active:scale-95 flex items-center gap-2"
+                        >
+                            <Plus className="w-4 h-4" /> New Studio
                         </Button>
                     </div>
                 </div>
 
-                <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="space-y-4">
                     {projects.length > 0 ? (
                         projects.map((project) => (
                             <div
                                 key={project.id}
                                 onClick={() => router.push(`/projects/${project.id}`)}
-                                className="group p-6 rounded-[2rem] bg-white border border-gray-100 hover:border-blue-100 hover:shadow-xl hover:shadow-blue-500/5 transition-all cursor-pointer flex items-center justify-between"
+                                className="group p-6 rounded-[2rem] bg-white border border-slate-50 hover:border-indigo-100 hover:shadow-2xl hover:shadow-indigo-500/5 transition-all cursor-pointer flex items-center justify-between"
                             >
-                                <div className="flex items-center gap-5">
-                                    <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition-all">
-                                        <FileText className="w-6 h-6" />
+                                <div className="flex items-center gap-6">
+                                    <div className="w-14 h-14 rounded-[1.25rem] bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 group-hover:border-indigo-100 transition-all">
+                                        <BarChart3 className="w-6 h-6" />
                                     </div>
                                     <div>
-                                        <h4 className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{project.name}</h4>
-                                        <div className="flex items-center gap-2 mt-1">
-                                            <Badge variant="secondary" className="bg-gray-100 text-gray-500 border-none px-2 py-0 h-5 text-[10px] font-bold uppercase tracking-wider">
+                                        <h4 className="text-lg font-display font-black text-slate-900 group-hover:text-indigo-600 transition-colors">{project.name}</h4>
+                                        <div className="flex items-center gap-3 mt-1.5">
+                                            <Badge className="bg-indigo-100 text-indigo-700 hover:bg-indigo-100 border-none px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider">
                                                 {project.template.name}
                                             </Badge>
-                                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">
-                                                {project._count?.documents || 0} Docs
-                                            </span>
+                                            <div className="flex items-center gap-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest ml-1">
+                                                <span className="flex items-center gap-1.5"><FileText className="w-3 h-3" /> {project._count?.documents || 0} Docs</span>
+                                                <span className="flex items-center gap-1.5"><Zap className="w-3 h-3" /> {project._count?.runs || 0} Runs</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-4">
-                                    <div className="hidden sm:flex flex-col items-end gap-0.5">
-                                        <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">Runs</span>
-                                        <span className="text-sm font-bold text-gray-700">{project._count?.runs || 0}</span>
+                                <div className="flex items-center gap-6">
+                                    <div className="hidden md:flex flex-col items-end gap-1">
+                                        <span className="text-[9px] font-black text-slate-300 uppercase tracking-[0.2em]">Last Sync</span>
+                                        <span className="text-xs font-bold text-slate-500">{new Date(project.createdAt).toLocaleDateString()}</span>
                                     </div>
-                                    <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-50">
-                                        <MoreVertical className="w-4 h-4 text-gray-400" />
-                                    </Button>
+                                    <div className="w-10 h-10 rounded-full border border-slate-50 flex items-center justify-center text-slate-300 group-hover:text-indigo-600 group-hover:border-indigo-100 group-hover:bg-indigo-50 transition-all">
+                                        <ArrowRight className="w-4 h-4" />
+                                    </div>
                                 </div>
                             </div>
                         ))
                     ) : (
-                        <div className="col-span-full py-20 bg-gray-50/50 rounded-[3rem] border-2 border-dashed border-gray-200 flex flex-col items-center justify-center space-y-4">
-                            <div className="w-16 h-16 rounded-3xl bg-white border border-gray-100 flex items-center justify-center text-gray-300">
-                                <Plus className="w-8 h-8" />
+                        <div className="py-32 noise glass rounded-[3rem] flex flex-col items-center justify-center space-y-6">
+                            <div className="w-20 h-20 rounded-[2rem] bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
+                                <Plus className="w-10 h-10" />
                             </div>
-                            <div className="text-center">
-                                <h3 className="font-bold text-gray-900">No projects yet</h3>
-                                <p className="text-sm text-gray-500">Create your first project to start extracting data.</p>
+                            <div className="text-center space-y-2">
+                                <h3 className="text-2xl font-display font-black text-slate-900">Empty Ledger</h3>
+                                <p className="text-slate-500 font-medium">Create your first extraction studio to begin.</p>
                             </div>
-                            <Button className="rounded-2xl px-6" onClick={() => router.push('/projects/new')}>
-                                Create Project
+                            <Button
+                                onClick={() => router.push('/projects/new')}
+                                className="h-14 px-10 rounded-2xl font-black bg-indigo-600 hover:bg-indigo-700 text-white shadow-2xl shadow-indigo-500/20"
+                            >
+                                Get Started
                             </Button>
                         </div>
                     )}

@@ -49,6 +49,10 @@ const config: Config = {
                 md: "calc(var(--radius) - 2px)",
                 sm: "calc(var(--radius) - 4px)",
             },
+            fontFamily: {
+                sans: ["var(--font-inter)", "Inter", "sans-serif"],
+                display: ["var(--font-outfit)", "Outfit", "sans-serif"],
+            },
             keyframes: {
                 "accordion-down": {
                     from: { height: "0" },
@@ -74,14 +78,19 @@ const config: Config = {
                     "0%": { transform: "scale(0.95)", opacity: "0" },
                     "100%": { transform: "scale(1)", opacity: "1" },
                 },
+                "glow": {
+                    "0%, 100%": { opacity: "1" },
+                    "50%": { opacity: "0.5" },
+                }
             },
             animation: {
                 "accordion-down": "accordion-down 0.2s ease-out",
                 "accordion-up": "accordion-up 0.2s ease-out",
                 "fade-in": "fade-in 0.5s ease-out",
-                "slide-up": "slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
+                "slide-up": "slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
                 "slide-in-right": "slide-in-right 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
-                "scale-in": "scale-in 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+                "scale-in": "scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+                "glow": "glow 2s ease-in-out infinite",
             },
         },
     },

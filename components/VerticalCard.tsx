@@ -11,6 +11,7 @@ interface VerticalCardProps {
     color: 'blue' | 'emerald' | 'purple' | 'amber';
     href?: string;
     stats?: string;
+    badge?: string;
     className?: string;
 }
 
@@ -21,6 +22,7 @@ export default function VerticalCard({
     color,
     href,
     stats,
+    badge,
     className
 }: VerticalCardProps) {
     const colorMap = {
@@ -41,44 +43,58 @@ export default function VerticalCard({
         <div
             onClick={() => href && (window.location.href = href)}
             className={cn(
-                "group relative overflow-hidden rounded-3xl border border-gray-100 bg-white p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl cursor-pointer",
+                "group relative overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white p-10 transition-all duration-700 hover:-translate-y-2 hover:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] cursor-pointer h-full flex flex-col justify-between",
                 className
             )}
         >
+            {/* Visual Textures */}
+            <div className="absolute inset-0 noise opacity-[0.03] pointer-events-none" />
             <div className={cn(
-                "absolute -right-4 -top-4 h-32 w-32 rounded-full opacity-10 blur-3xl transition-all duration-500 group-hover:scale-150 group-hover:opacity-20",
+                "absolute -right-10 -top-10 h-64 w-64 rounded-full opacity-0 blur-3xl transition-all duration-1000 group-hover:opacity-40",
                 bgMap[color]
             )} />
 
-            <div className="relative z-10">
-                <div className={cn(
-                    "mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br shadow-xl transition-all duration-500 group-hover:scale-110 group-hover:rotate-3",
-                    colorMap[color]
-                )}>
-                    <Icon className="h-7 w-7 text-white" />
-                </div>
-
-                <div className="mb-2 flex items-center justify-between">
-                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
-                        {title}
-                    </h3>
-                    {stats && (
-                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-blue-500 transition-colors">
-                            {stats}
-                        </span>
+            <div className="relative z-10 flex flex-col h-full">
+                <div className="flex justify-between items-start mb-8">
+                    <div className={cn(
+                        "flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br shadow-2xl transition-all duration-700 group-hover:rotate-[10deg] group-hover:scale-110",
+                        colorMap[color]
+                    )}>
+                        <Icon className="h-8 w-8 text-white" />
+                    </div>
+                    {badge && (
+                        <div className="px-3 py-1 rounded-full bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest animate-fade-in">
+                            {badge}
+                        </div>
                     )}
                 </div>
 
-                <p className="mb-8 text-sm leading-relaxed text-gray-600">
-                    {description}
-                </p>
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-3xl font-display font-black text-slate-900 group-hover:text-indigo-600 transition-colors leading-tight">
+                            {title}
+                        </h3>
+                    </div>
 
-                <div className="flex items-center gap-2 text-sm font-bold text-blue-600 opacity-0 transition-all duration-500 group-hover:translate-x-2 group-hover:opacity-100">
-                    Get Started <ArrowRight className="h-4 w-4" />
+                    <p className="text-base leading-relaxed text-slate-500 font-medium">
+                        {description}
+                    </p>
+                </div>
+
+                <div className="mt-auto pt-10 flex items-center justify-between">
+                    {stats ? (
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                            {stats}
+                        </span>
+                    ) : <div />}
+
+                    <div className="flex items-center gap-2 text-sm font-black text-indigo-600 transition-all duration-500 group-hover:translate-x-1">
+                        Explore <ArrowRight className="h-4 w-4" />
+                    </div>
                 </div>
             </div>
 
-            <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r transition-all duration-500 opacity-0 group-hover:opacity-100" style={{ backgroundImage: `linear-gradient(to right, var(--${color}-500), var(--${color}-600))` }} />
+            <div className="absolute inset-0 border-2 border-transparent group-hover:border-indigo-500/10 rounded-[2.5rem] transition-all duration-700" />
         </div>
     );
 }

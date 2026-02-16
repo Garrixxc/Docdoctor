@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
         workspace: {
             id: workspace.id,
             name: workspace.name,
-            tier: workspace.tier,
+            tier: (session?.user as any)?.tier || 'FREE',
         },
         limits: {
             freeTierPages: FREE_TIER_PAGE_LIMIT,

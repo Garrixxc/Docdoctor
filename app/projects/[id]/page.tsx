@@ -151,27 +151,28 @@ export default function ProjectPage() {
     return (
         <div className="container mx-auto px-4 py-8 space-y-10 animate-fade-in">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="space-y-4">
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10">
+                <div className="space-y-6">
                     <button
                         onClick={() => router.push('/dashboard')}
-                        className="flex items-center gap-2 text-xs font-bold text-gray-400 hover:text-blue-600 transition-colors uppercase tracking-widest"
+                        className="flex items-center gap-2 text-[10px] font-black text-slate-400 hover:text-indigo-600 transition-all uppercase tracking-widest group"
                     >
-                        <ArrowLeft className="w-3 h-3" /> Back to Dashboard
+                        <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" /> Path to Workspace
                     </button>
-                    <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-xl shadow-blue-500/20">
-                            <Zap className="w-7 h-7" />
+                    <div className="flex items-center gap-6">
+                        <div className="w-20 h-20 rounded-[2rem] bg-indigo-600 text-white flex items-center justify-center shadow-2xl shadow-indigo-500/20 group relative overflow-hidden">
+                            <Zap className="w-10 h-10 fill-white/20 group-hover:scale-110 transition-transform duration-500" />
+                            <div className="absolute inset-0 noise opacity-[.1] pointer-events-none" />
                         </div>
-                        <div>
-                            <div className="flex items-center gap-3">
-                                <h1 className="text-4xl font-black text-gray-900 tracking-tight">{project.name}</h1>
-                                <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 border-none px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">
+                        <div className="space-y-2">
+                            <div className="flex items-center gap-4">
+                                <h1 className="text-5xl font-display font-black text-slate-900 tracking-tighter leading-none">{project.name}</h1>
+                                <Badge className="bg-indigo-50 text-indigo-700 border-indigo-100/50 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-[0.2em]">
                                     {project.template.name}
                                 </Badge>
                             </div>
-                            <p className="text-gray-500 font-medium mt-1">
-                                {documents.length} Docs · {runs.length} Runs · Created {new Date(project.createdAt).toLocaleDateString()}
+                            <p className="text-xl text-slate-500 font-medium">
+                                <span className="text-slate-900 font-black">{documents.length}</span> Objects · <span className="text-slate-900 font-black">{runs.length}</span> Evolutions · Studio established <span className="text-indigo-600 font-black uppercase tracking-widest text-[10px] ml-2">{new Date(project.createdAt).toLocaleDateString()}</span>
                             </p>
                         </div>
                     </div>
@@ -191,12 +192,12 @@ export default function ProjectPage() {
             </div>
 
             <Tabs defaultValue="documents" className="w-full">
-                <TabsList className="bg-transparent border-b border-gray-100 w-full justify-start h-auto p-0 gap-8 rounded-none mb-8">
+                <TabsList className="bg-transparent border-b border-slate-100 w-full justify-start h-auto p-0 gap-10 rounded-none mb-12">
                     {['documents', 'runs', 'settings'].map((tab) => (
                         <TabsTrigger
                             key={tab}
                             value={tab}
-                            className="bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-blue-600 rounded-none px-2 py-4 text-sm font-black uppercase tracking-widest text-gray-400 data-[state=active]:text-blue-600 transition-all border-b-2 border-transparent"
+                            className="bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-indigo-600 rounded-none px-2 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 data-[state=active]:text-indigo-600 transition-all border-b-2 border-transparent"
                         >
                             {tab}
                         </TabsTrigger>
@@ -208,29 +209,27 @@ export default function ProjectPage() {
                         {/* Upload Card */}
                         <div className="lg:col-span-1">
                             <div className="sticky top-24 space-y-6">
-                                <Card className="rounded-[2rem] border-none shadow-xl shadow-blue-500/5 bg-white overflow-hidden">
-                                    <div className="p-8 space-y-6 text-center">
-                                        <div className="w-16 h-16 rounded-3xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto transition-transform hover:rotate-3">
-                                            <Upload className="w-8 h-8" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <h3 className="text-xl font-black text-gray-900">Add Documents</h3>
-                                            <p className="text-sm text-gray-500 font-medium">Upload PDF files to start extracting data.</p>
-                                        </div>
-                                        <label className="block">
-                                            <input
-                                                type="file"
-                                                accept=".pdf"
-                                                onChange={handleFileUpload}
-                                                disabled={uploading}
-                                                className="hidden"
-                                            />
-                                            <Button className="w-full h-12 rounded-xl font-bold" disabled={uploading}>
-                                                {uploading ? 'Processing...' : 'Choose PDF'}
-                                            </Button>
-                                        </label>
+                                <div className="noise glass rounded-[2.5rem] p-10 space-y-8 text-center border-none shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)]">
+                                    <div className="w-20 h-20 rounded-[1.5rem] bg-indigo-600 text-white flex items-center justify-center mx-auto transition-transform hover:scale-110 shadow-xl shadow-indigo-200">
+                                        <Upload className="w-10 h-10" />
                                     </div>
-                                </Card>
+                                    <div className="space-y-3">
+                                        <h3 className="text-2xl font-display font-black text-slate-900 leading-tight">Augment Studio</h3>
+                                        <p className="text-sm text-slate-500 font-medium leading-relaxed">Infuse new datasets into your current orchestration stream.</p>
+                                    </div>
+                                    <label className="block">
+                                        <input
+                                            type="file"
+                                            accept=".pdf"
+                                            onChange={handleFileUpload}
+                                            disabled={uploading}
+                                            className="hidden"
+                                        />
+                                        <Button className="w-full h-14 rounded-2xl font-black bg-slate-900 hover:bg-slate-800 text-white shadow-2xl shadow-slate-200 transition-all active:scale-95" disabled={uploading}>
+                                            {uploading ? 'Processing Architecture...' : 'Select PDF Source'}
+                                        </Button>
+                                    </label>
+                                </div>
                             </div>
                         </div>
 

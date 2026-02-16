@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, ArrowRight, Check, Zap, Brain, ShieldCheck, ChevronRight, Lock } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Zap, Brain, ShieldCheck, ChevronRight, Lock, Clock, Sparkles } from 'lucide-react';
 import PlanSelector from '@/components/PlanSelector';
 import { cn } from '@/lib/utils/cn';
 
@@ -128,288 +128,321 @@ function NewProjectContent() {
     }
 
     return (
-        <div className="container mx-auto px-4 py-8 max-w-5xl">
+        <div className="container mx-auto px-6 py-10 max-w-6xl space-y-16 animate-fade-in relative z-10">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-                <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="icon" onClick={() => router.back()} className="rounded-full hover:bg-white border-transparent hover:border-gray-100">
-                        <ArrowLeft className="w-5 h-5" />
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10">
+                <div className="space-y-6">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => router.back()}
+                        className="rounded-xl hover:bg-white border border-slate-100 hover:border-slate-200 transition-all hover:translate-x-[-4px]"
+                    >
+                        <ArrowLeft className="w-5 h-5 text-slate-600" />
                     </Button>
-                    <div>
-                        <h1 className="text-4xl font-black text-gray-900 tracking-tight">New Extraction Project</h1>
-                        <p className="text-gray-500 font-medium">Configure your industrial datasets studio</p>
+                    <div className="space-y-2">
+                        <h1 className="text-5xl font-display font-black text-slate-900 tracking-tighter leading-none">New Project Studio</h1>
+                        <p className="text-xl text-slate-500 font-medium">Configure your industrial datasets for scale.</p>
                     </div>
                 </div>
 
-                {/* Progress Visual */}
-                <div className="flex flex-col gap-2 min-w-[200px]">
-                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-blue-600">
-                        <span>Step {step} of 3</span>
-                        <span>{Math.round((step / 3) * 100)}%</span>
+                {/* Evolution Meter */}
+                <div className="flex flex-col gap-4 min-w-[300px] noise glass p-6 rounded-[2rem]">
+                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-indigo-600">
+                        <span>Project Evolution</span>
+                        <span className="text-slate-400">{Math.round((step / 3) * 100)}% Processed</span>
                     </div>
-                    <Progress value={(step / 3) * 100} className="h-2 rounded-full" />
+                    <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden p-[2px]">
+                        <div
+                            className="h-full bg-indigo-600 rounded-full transition-all duration-1000 ease-out shadow-[0_0_12px_rgba(79,70,229,0.3)]"
+                            style={{ width: `${(step / 3) * 100}%` }}
+                        />
+                    </div>
                 </div>
             </div>
 
-            {/* Steps Navigation Sidebar / Top */}
-            <div className="flex flex-wrap items-center gap-3 mb-12">
+            {/* Stepper Navigation */}
+            <div className="flex flex-wrap items-center gap-4">
                 {STEPS.map((s, i) => (
-                    <div key={s.id} className="flex items-center gap-3">
+                    <div key={s.id} className="flex items-center gap-4">
                         <button
                             onClick={() => { if (s.id < step) setStep(s.id); }}
                             className={cn(
-                                "flex items-center gap-3 px-6 py-3 rounded-2xl text-sm font-bold transition-all border-2",
+                                "flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-black transition-all border",
                                 s.id === step
-                                    ? "bg-white border-blue-600 text-blue-600 shadow-xl shadow-blue-500/10"
+                                    ? "bg-white border-indigo-600 text-indigo-600 shadow-2xl shadow-indigo-500/10"
                                     : s.id < step
-                                        ? "bg-blue-50 border-transparent text-blue-700 hover:bg-blue-100"
-                                        : "bg-white border-gray-100 text-gray-400 opacity-60 pointer-events-none"
+                                        ? "bg-indigo-50 border-transparent text-indigo-700 hover:bg-indigo-100"
+                                        : "bg-white border-slate-100 text-slate-300 opacity-60 pointer-events-none"
                             )}
                         >
                             <span className={cn(
-                                "w-6 h-6 rounded-full flex items-center justify-center text-[10px]",
-                                s.id === step ? "bg-blue-600 text-white" : s.id < step ? "bg-blue-200 text-blue-700" : "bg-gray-100 text-gray-400"
+                                "w-7 h-7 rounded-lg flex items-center justify-center text-[10px]",
+                                s.id === step ? "bg-indigo-600 text-white" : s.id < step ? "bg-indigo-200 text-indigo-700" : "bg-slate-100 text-slate-300"
                             )}>
-                                {s.id < step ? <Check className="w-3 h-3" /> : s.id}
+                                {s.id < step ? <Check className="w-4 h-4" /> : s.id}
                             </span>
                             {s.label}
                         </button>
-                        {i < STEPS.length - 1 && <ChevronRight className="w-4 h-4 text-gray-300" />}
+                        {i < STEPS.length - 1 && <ChevronRight className="w-5 h-5 text-slate-200" />}
                     </div>
                 ))}
             </div>
 
-            {/* Step 1: Plan Selection */}
-            {step === 1 && (
-                <div className="space-y-8 animate-slide-up">
-                    <div className="text-center space-y-4 max-w-2xl mx-auto mb-10">
-                        <h2 className="text-3xl font-black text-gray-900">Choose your processing plan</h2>
-                        <p className="text-gray-500 font-medium">Use our community defaults or unlock ultimate scale with your own API key.</p>
+            {/* Step Content */}
+            <div className="relative min-h-[500px]">
+                {/* Step 1: Infrastructure */}
+                {step === 1 && (
+                    <div className="space-y-12 animate-slide-up">
+                        <div className="text-center space-y-4 max-w-2xl mx-auto">
+                            <h2 className="text-4xl font-display font-black text-slate-900 tracking-tight leading-tight">Select Infrastructure</h2>
+                            <p className="text-slate-500 font-medium text-lg">Choose a plan that matches your project scale.</p>
+                        </div>
+
+                        <PlanSelector value={plan} onChange={setPlan} />
+
+                        <div className="flex justify-end">
+                            <Button
+                                onClick={() => setStep(2)}
+                                size="lg"
+                                className="h-16 px-12 rounded-[1.25rem] text-lg font-black bg-slate-900 hover:bg-slate-800 text-white shadow-2xl transition-all active:scale-95 flex items-center gap-3"
+                            >
+                                Configure Studio <ArrowRight className="w-6 h-6" />
+                            </Button>
+                        </div>
                     </div>
+                )}
 
-                    <PlanSelector value={plan} onChange={setPlan} />
-
-                    <div className="flex justify-end pt-8">
-                        <Button
-                            onClick={() => setStep(2)}
-                            size="lg"
-                            className="h-14 px-10 rounded-2xl text-lg font-bold shadow-xl shadow-blue-500/10"
-                        >
-                            Configure Project <ArrowRight className="w-5 h-5 ml-2" />
-                        </Button>
-                    </div>
-                </div>
-            )}
-
-            {/* Step 2: Project Details */}
-            {step === 2 && (
-                <div className="grid lg:grid-cols-3 gap-12 animate-slide-up">
-                    <div className="lg:col-span-2 space-y-8">
-                        <section className="space-y-6">
-                            <h2 className="text-3xl font-black text-gray-900">Project Details</h2>
-                            <div className="grid gap-6">
-                                <div className="space-y-3">
-                                    <Label htmlFor="name" className="text-base font-bold text-gray-700">Name your dataset collection</Label>
+                {/* Step 2: Configuration */}
+                {step === 2 && (
+                    <div className="grid lg:grid-cols-12 gap-12 animate-slide-up">
+                        <div className="lg:col-span-8 space-y-12">
+                            <section className="space-y-8">
+                                <h2 className="text-3xl font-display font-black text-slate-900 leading-tight">Project Identity</h2>
+                                <div className="space-y-4">
+                                    <Label htmlFor="name" className="text-xs font-black uppercase tracking-widest text-slate-500 ml-1">Studio Name</Label>
                                     <Input
                                         id="name"
                                         value={formData.name}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                        placeholder="e.g., Q1 2026 COI Compliance Review"
-                                        className="h-14 px-6 rounded-2xl text-lg border-2 focus-visible:ring-blue-500/20"
+                                        placeholder="e.g., Q1 2026 COI Compliance Audit"
+                                        className="h-16 px-8 rounded-2xl text-xl border-slate-100 bg-slate-50/50 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-display font-black"
                                     />
-                                    <p className="text-xs text-gray-400 font-medium ml-2 uppercase tracking-wide">Enter a unique name to identify your project results</p>
                                 </div>
-                            </div>
-                        </section>
+                            </section>
 
-                        <section className="space-y-6">
-                            <h2 className="text-2xl font-black text-gray-900">Industrial Requirements</h2>
-                            {selectedTemplate ? (
-                                <div className="p-8 rounded-[2rem] bg-gray-50/50 border-2 border-dashed border-gray-200 space-y-8">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center text-white">
-                                            <Zap className="w-6 h-6" />
+                            <section className="space-y-8">
+                                <div className="flex items-center gap-4">
+                                    <h2 className="text-2xl font-display font-black text-slate-900 tracking-tight">Industrial Requirements</h2>
+                                    <div className="h-[1px] flex-1 bg-slate-100" />
+                                </div>
+                                {selectedTemplate ? (
+                                    <div className="p-10 rounded-[2.5rem] bg-indigo-50/30 border border-indigo-100/50 space-y-10 relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 p-8 opacity-[0.05]">
+                                            <Brain className="w-32 h-32 text-indigo-600" />
                                         </div>
-                                        <div>
-                                            <h4 className="font-bold text-gray-900">Configuring for {selectedTemplate.name}</h4>
-                                            <p className="text-sm text-gray-500 font-medium">{selectedTemplate.category} Vertical</p>
+                                        <div className="flex items-center gap-6 relative z-10">
+                                            <div className="w-16 h-16 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-xl shadow-indigo-200">
+                                                <Zap className="w-8 h-8 fill-white/20" />
+                                            </div>
+                                            <div>
+                                                <h4 className="text-xl font-display font-black text-slate-900">{selectedTemplate.name}</h4>
+                                                <p className="text-slate-500 font-medium">{selectedTemplate.category} Vertical Intelligence</p>
+                                            </div>
+                                        </div>
+
+                                        {selectedTemplate.slug === 'coi' ? (
+                                            <div className="grid md:grid-cols-2 gap-8 relative z-10">
+                                                <div className="space-y-3">
+                                                    <Label htmlFor="minLiability" className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Min Liability ($)</Label>
+                                                    <Input
+                                                        id="minLiability"
+                                                        type="number"
+                                                        value={formData.requirements.minLiabilityPerOccurrence || ''}
+                                                        onChange={(e) => setFormData({
+                                                            ...formData,
+                                                            requirements: { ...formData.requirements, minLiabilityPerOccurrence: Number(e.target.value) }
+                                                        })}
+                                                        placeholder="1,000,000"
+                                                        className="h-14 px-6 rounded-xl border-slate-200 bg-white font-black"
+                                                    />
+                                                </div>
+                                                <div className="space-y-3">
+                                                    <Label htmlFor="minAggregate" className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Min Aggregate ($)</Label>
+                                                    <Input
+                                                        id="minAggregate"
+                                                        type="number"
+                                                        value={formData.requirements.minGeneralAggregate || ''}
+                                                        onChange={(e) => setFormData({
+                                                            ...formData,
+                                                            requirements: { ...formData.requirements, minGeneralAggregate: Number(e.target.value) }
+                                                        })}
+                                                        placeholder="2,000,000"
+                                                        className="h-14 px-6 rounded-xl border-slate-200 bg-white font-black"
+                                                    />
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="py-6 text-center bg-white/50 rounded-3xl border border-white relative z-10">
+                                                <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Standard Intelligent Field Mapping Active</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="p-10 rounded-[2.5rem] bg-slate-50 border border-slate-100 flex items-center justify-center">
+                                        <div className="flex items-center gap-3 text-slate-400">
+                                            <Clock className="w-5 h-5 animate-spin" />
+                                            <span className="font-black uppercase tracking-widest text-[10px]">Loading Intelligence...</span>
                                         </div>
                                     </div>
+                                )}
+                            </section>
 
-                                    {selectedTemplate.slug === 'coi' && (
-                                        <div className="grid md:grid-cols-2 gap-6">
-                                            <div className="space-y-2">
-                                                <Label htmlFor="minLiability" className="text-xs font-black uppercase tracking-widest text-gray-500">Min Liability ($)</Label>
-                                                <Input
-                                                    id="minLiability"
-                                                    type="number"
-                                                    value={formData.requirements.minLiabilityPerOccurrence || ''}
-                                                    onChange={(e) => setFormData({
-                                                        ...formData,
-                                                        requirements: { ...formData.requirements, minLiabilityPerOccurrence: Number(e.target.value) }
-                                                    })}
-                                                    placeholder="1,000,000"
-                                                    className="h-12 px-4 rounded-xl border-2"
-                                                />
-                                            </div>
-                                            <div className="space-y-2">
-                                                <Label htmlFor="minAggregate" className="text-xs font-black uppercase tracking-widest text-gray-500">Min Aggregate ($)</Label>
-                                                <Input
-                                                    id="minAggregate"
-                                                    type="number"
-                                                    value={formData.requirements.minGeneralAggregate || ''}
-                                                    onChange={(e) => setFormData({
-                                                        ...formData,
-                                                        requirements: { ...formData.requirements, minGeneralAggregate: Number(e.target.value) }
-                                                    })}
-                                                    placeholder="2,000,000"
-                                                    className="h-12 px-4 rounded-xl border-2"
-                                                />
-                                            </div>
-                                        </div>
-                                    )}
+                            <div className="flex justify-between items-center pt-8">
+                                <Button variant="ghost" onClick={() => setStep(1)} className="h-14 px-8 rounded-2xl font-black text-slate-500 hover:text-indigo-600 transition-colors">
+                                    <ArrowLeft className="w-5 h-5 mr-3" /> Previous Step
+                                </Button>
+                                <Button
+                                    onClick={() => setStep(3)}
+                                    disabled={!formData.name || !formData.templateId}
+                                    className="h-16 px-12 rounded-[1.25rem] text-lg font-black bg-indigo-600 hover:bg-indigo-700 text-white shadow-2xl shadow-indigo-500/10 transition-all active:scale-95 flex items-center gap-3"
+                                >
+                                    Orchestration Review <ArrowRight className="w-6 h-6" />
+                                </Button>
+                            </div>
+                        </div>
 
-                                    {selectedTemplate.slug !== 'coi' && (
-                                        <div className="flex items-center justify-center py-6 text-center">
-                                            <p className="text-gray-400 text-sm font-medium italic">No custom requirements needed for this vertical.<br />Standard extraction fields will be used.</p>
-                                        </div>
-                                    )}
+                        {/* Summary Deck */}
+                        <div className="lg:col-span-4 space-y-6">
+                            <div className="noise glass rounded-[2.5rem] p-8 space-y-8 sticky top-32">
+                                <div className="space-y-1">
+                                    <h3 className="text-2xl font-display font-black text-slate-900 tracking-tight">Studio Setup</h3>
+                                    <p className="text-xs text-slate-500 font-medium">Build phase summary</p>
                                 </div>
-                            ) : (
-                                <div className="p-8 rounded-[2rem] bg-gray-50 text-center border-2 border-dashed border-gray-200">
-                                    <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">Loading Template Configuration...</p>
+
+                                <div className="space-y-6">
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Plan</span>
+                                        <Badge variant="outline" className="bg-indigo-50 text-indigo-600 border-indigo-100 font-black">{plan}</Badge>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Vertical</span>
+                                        <span className="text-sm font-black text-slate-900">{selectedTemplate?.name || 'Pending'}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Monthly Capacity</span>
+                                        <span className="text-sm font-black text-slate-900">{plan === 'FREE' ? '50 Pages' : 'Unlimited'}</span>
+                                    </div>
+                                </div>
+
+                                <div className="p-6 rounded-3xl bg-indigo-600 text-white space-y-4">
+                                    <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest opacity-80">
+                                        <Sparkles className="w-4 h-4 fill-white/20" />
+                                        Model Specification
+                                    </div>
+                                    <div className="text-2xl font-display font-black tracking-tight">{plan === 'FREE' ? 'GPT-4o-mini' : 'GPT-4o'}</div>
+                                    <p className="text-[10px] opacity-70 font-medium tracking-wide leading-relaxed uppercase">Optimized for high-fidelity industrial extraction architecture.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Step 3: Deployment */}
+                {step === 3 && (
+                    <div className="max-w-4xl mx-auto space-y-12 animate-slide-up pb-20">
+                        <div className="text-center space-y-6">
+                            <div className="w-24 h-24 rounded-[2.5rem] bg-indigo-600 text-white flex items-center justify-center mx-auto shadow-2xl shadow-indigo-500/20 group">
+                                <Sparkles className="w-12 h-12 fill-white/20 group-hover:scale-110 transition-transform duration-500" />
+                            </div>
+                            <div className="space-y-2">
+                                <h2 className="text-5xl font-display font-black text-slate-900 tracking-tighter leading-none">Ready for Orchestration</h2>
+                                <p className="text-xl text-slate-500 font-medium">Verify your intelligence parameters before studio deployment.</p>
+                            </div>
+                        </div>
+
+                        <div className="grid gap-8">
+                            <div className="p-10 rounded-[3rem] bg-white border border-slate-100 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] space-y-12 relative overflow-hidden">
+                                <div className="absolute inset-0 grid-bg opacity-[0.05] pointer-events-none" />
+
+                                <div className="grid md:grid-cols-2 gap-16 relative z-10">
+                                    <div className="space-y-2">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Studio Configuration</span>
+                                        <p className="text-2xl font-display font-black text-slate-900 leading-tight">{formData.name}</p>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Model Architecture</span>
+                                        <div className="flex items-center gap-3 text-2xl font-display font-black text-indigo-600">
+                                            <Zap className="w-6 h-6 fill-indigo-100" />
+                                            {selectedTemplate?.name} Intelligence
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Resource Tier</span>
+                                        <div className="flex items-center gap-3 text-2xl font-display font-black text-slate-900">
+                                            {plan === 'FREE' ? <Badge className="bg-slate-100 text-slate-600">Free</Badge> : <Badge className="bg-indigo-600 text-white border-none">PRO (BYO)</Badge>}
+                                            <span className="text-slate-400 font-medium">/ {plan === 'FREE' ? '50 Pg' : 'Unlimited'}</span>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Extraction Engine</span>
+                                        <p className="text-2xl font-display font-black text-slate-900">{plan === 'FREE' ? 'GPT-4o-mini' : 'GPT-4o'}</p>
+                                    </div>
+                                </div>
+
+                                <div className="h-[1px] bg-slate-100 flex items-center justify-center">
+                                    <div className="bg-white px-6 text-[11px] font-black text-slate-300 uppercase tracking-[0.3em]">Specs Ledger</div>
+                                </div>
+
+                                <div className="grid md:grid-cols-3 gap-8 relative z-10">
+                                    <div className="p-6 rounded-3xl bg-slate-50 border border-slate-100/50 space-y-1">
+                                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">Orchestrator</span>
+                                        <span className="text-base font-black text-slate-700">{plan === 'FREE' ? 'Shared' : 'Dedicated (BYO)'}</span>
+                                    </div>
+                                    <div className="p-6 rounded-3xl bg-slate-50 border border-slate-100/50 space-y-1">
+                                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">Chunk Methodology</span>
+                                        <span className="text-base font-black text-slate-700">{plan === 'FREE' ? 'Linear (Page)' : 'Semantic (Headings)'}</span>
+                                    </div>
+                                    <div className="p-6 rounded-3xl bg-slate-50 border border-slate-100/50 space-y-1">
+                                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">Precision export</span>
+                                        <span className="text-base font-black text-slate-700">{plan === 'FREE' ? 'CSV Only' : 'CSV, JSON, SQL'}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {plan === 'BYO' && (
+                                <div className="p-6 rounded-3xl bg-indigo-50 border border-indigo-100 flex items-center gap-6 animate-pulse">
+                                    <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shrink-0 shadow-lg shadow-indigo-200">
+                                        <Lock className="w-6 h-6" />
+                                    </div>
+                                    <p className="text-sm font-bold text-indigo-700 leading-relaxed">Infrastructure check: Ensure your API key is configured in Workspace Settings for successful deployment.</p>
                                 </div>
                             )}
-                        </section>
+                        </div>
 
-                        <div className="flex justify-between pt-8">
-                            <Button variant="ghost" onClick={() => setStep(1)} className="h-14 px-8 rounded-2xl font-bold">
-                                <ArrowLeft className="w-5 h-5 mr-2" /> Change Plan
+                        <div className="flex flex-col md:flex-row justify-between items-center gap-8 pt-10">
+                            <Button variant="ghost" onClick={() => setStep(2)} className="h-16 px-10 rounded-2xl font-black text-slate-400 hover:text-indigo-600 transition-colors">
+                                <ArrowLeft className="w-5 h-5 mr-3" /> Adjustment required
                             </Button>
                             <Button
-                                onClick={() => setStep(3)}
-                                disabled={!formData.name || !formData.templateId}
-                                className="h-14 px-10 rounded-2xl text-lg font-bold shadow-xl shadow-blue-500/10"
+                                onClick={handleSubmit}
+                                disabled={loading}
+                                className="h-20 px-16 rounded-[1.5rem] text-2xl font-black bg-indigo-600 hover:bg-slate-900 text-white shadow-[0_20px_40px_-10px_rgba(79,70,229,0.3)] hover:translate-y-[-4px] active:scale-95 transition-all flex items-center gap-4"
                             >
-                                Review Project <ArrowRight className="w-5 h-5 ml-2" />
+                                {loading ? (
+                                    <>
+                                        <Clock className="w-6 h-6 animate-spin" /> Orchestrating...
+                                    </>
+                                ) : (
+                                    <>
+                                        Launch Studio <Sparkles className="w-6 h-6 fill-white/20" />
+                                    </>
+                                )}
                             </Button>
                         </div>
                     </div>
-
-                    {/* Sidebar Summary */}
-                    <div className="space-y-6">
-                        <Card className="rounded-[2.5rem] border-none shadow-2xl shadow-blue-500/5 bg-white overflow-hidden">
-                            <CardHeader className="bg-gray-50/50 border-b border-gray-100">
-                                <CardTitle className="text-lg font-black">Project Summary</CardTitle>
-                            </CardHeader>
-                            <CardContent className="p-6 space-y-6">
-                                <div className="space-y-4">
-                                    <div className="flex justify-between text-xs font-bold uppercase tracking-widest text-gray-400">
-                                        <span>Plan</span>
-                                        <Badge variant="outline" className="text-blue-600 bg-blue-50 border-blue-100">{plan}</Badge>
-                                    </div>
-                                    <div className="flex justify-between text-xs font-bold uppercase tracking-widest text-gray-400">
-                                        <span>Vertical</span>
-                                        <span className="text-gray-900">{selectedTemplate?.name || '---'}</span>
-                                    </div>
-                                    <div className="flex justify-between text-xs font-bold uppercase tracking-widest text-gray-400">
-                                        <span>Pages / Mo</span>
-                                        <span className="text-gray-900 font-black">{plan === 'FREE' ? '50' : 'Unlimited'}</span>
-                                    </div>
-                                </div>
-                                <div className="p-4 rounded-2xl bg-blue-600 text-white space-y-2">
-                                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest opacity-80">
-                                        <Brain className="w-3 h-3" />
-                                        Default Model
-                                    </div>
-                                    <div className="text-lg font-black">{plan === 'FREE' ? 'GPT-4o-mini' : 'GPT-4o'}</div>
-                                    <p className="text-[10px] opacity-70 font-medium">Higher accuracy for complex layouts.</p>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </div>
-            )}
-
-            {/* Step 3: Confirmation */}
-            {step === 3 && (
-                <div className="max-w-3xl mx-auto space-y-12 animate-slide-up">
-                    <div className="text-center space-y-4">
-                        <div className="w-20 h-20 rounded-3xl bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-green-500/10">
-                            <ShieldCheck className="w-10 h-10" />
-                        </div>
-                        <h2 className="text-4xl font-black text-gray-900">Ready to go!</h2>
-                        <p className="text-gray-500 text-lg font-medium">Review your project configuration before starting the studio.</p>
-                    </div>
-
-                    <div className="grid gap-4">
-                        <div className="p-8 rounded-[2.5rem] bg-white border border-gray-100 shadow-xl space-y-8">
-                            <div className="grid md:grid-cols-2 gap-12">
-                                <div className="space-y-1">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Project Name</span>
-                                    <p className="text-xl font-black text-gray-900">{formData.name}</p>
-                                </div>
-                                <div className="space-y-1">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Extraction Vertical</span>
-                                    <p className="text-xl font-black text-blue-600">{selectedTemplate?.name}</p>
-                                </div>
-                                <div className="space-y-1">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Selected Plan</span>
-                                    <div className="flex items-center gap-2 text-xl font-black text-gray-900">
-                                        {plan === 'FREE' ? <Zap className="w-5 h-5 text-amber-500 fill-amber-500" /> : <ShieldCheck className="w-5 h-5 text-indigo-600" />}
-                                        {plan === 'FREE' ? 'Free Tier' : 'BYO Key'}
-                                    </div>
-                                </div>
-                                <div className="space-y-1">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Monthly Limit</span>
-                                    <p className="text-xl font-black text-gray-900">{plan === 'FREE' ? '50 Pages' : 'Unlimited'}</p>
-                                </div>
-                            </div>
-
-                            <div className="h-[1px] bg-gray-50 flex items-center justify-center">
-                                <div className="bg-white px-4 text-[10px] font-black text-gray-300 uppercase tracking-widest">Advanced Details</div>
-                            </div>
-
-                            <div className="grid md:grid-cols-3 gap-6">
-                                <div className="p-4 rounded-2xl bg-gray-50 text-center">
-                                    <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 block mb-1">Model</span>
-                                    <span className="text-sm font-bold text-gray-700">{plan === 'FREE' ? 'gpt-4o-mini' : 'gpt-4o'}</span>
-                                </div>
-                                <div className="p-4 rounded-2xl bg-gray-50 text-center">
-                                    <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 block mb-1">Chunking</span>
-                                    <span className="text-sm font-bold text-gray-700">{plan === 'FREE' ? 'by_pages' : 'headings'}</span>
-                                </div>
-                                <div className="p-4 rounded-2xl bg-gray-50 text-center">
-                                    <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 block mb-1">Export</span>
-                                    <span className="text-sm font-bold text-gray-700">{plan === 'FREE' ? 'CSV' : 'CSV, JSON'}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {plan === 'BYO' && (
-                            <div className="p-4 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shrink-0">
-                                    <Lock className="w-5 h-5" />
-                                </div>
-                                <p className="text-sm font-medium text-indigo-700">Make sure you have added your OpenAI API key in Workspace Settings to run this project.</p>
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="flex justify-between items-center">
-                        <Button variant="ghost" onClick={() => setStep(2)} className="h-14 px-8 rounded-2xl font-bold">
-                            <ArrowLeft className="w-5 h-5 mr-2" /> Back to Details
-                        </Button>
-                        <Button
-                            onClick={handleSubmit}
-                            disabled={loading}
-                            className="h-14 px-12 rounded-2xl text-xl font-black bg-blue-600 hover:bg-blue-700 shadow-2xl shadow-blue-500/20 active:scale-95 transition-all"
-                        >
-                            {loading ? "Creating Studio..." : "Launch Project"}
-                        </Button>
-                    </div>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 }
