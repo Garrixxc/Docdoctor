@@ -8,6 +8,7 @@ import { FixedTokenChunker } from './chunkers/fixed-tokens';
 import { HeadingChunker } from './chunkers/headings';
 import { validateExtraction } from './validator';
 import { ProviderFactory } from '@/lib/llm/provider-factory';
+import { checkCostGuardrail } from '@/lib/utils/cost-guardrail';
 import logger from '@/lib/utils/logger';
 
 export class ProcessingOrchestrator {
@@ -50,8 +51,33 @@ export class ProcessingOrchestrator {
             logger.info({ runId: this.runId, documentCount: documents.length }, 'Starting run');
 
             let totalCost = 0;
+            const settings = run.settingsSnapshot as any;
+            const maxCostPerRun = settings?.maxCostPerRun ?? null;
+            const autoAcceptThreshold = settings?.autoAcceptThreshold ?? 0.95;
+            const needsReviewThreshold = settings?.needsReviewThreshold ?? 0.7;
 
             for (const document of documents) {
+                // Cost guardrail check before processing each document
+                const costCheck = checkCostGuardrail(totalCost, maxCostPerRun);
+                if (!costCheck.allowed) {
+                    logger.warn({
+                        runId: this.runId,
+                        documentId: document.id,
+                        currentCost: totalCost,
+                        maxCost: maxCostPerRun,
+                    }, 'Cost guardrail triggered — stopping processing');
+
+                    await prisma.document.update({
+                        where: { id: document.id },
+                        data: { skipReason: costCheck.message || 'Cost limit exceeded' },
+                    });
+                    await prisma.run.update({
+                        where: { id: this.runId },
+                        data: { skippedCount: { increment: 1 } },
+                    });
+                    continue; // Skip remaining documents
+                }
+
                 try {
                     // Step 1: Parse document
                     const parseStep = await this.createStep('parse_document', {
@@ -81,7 +107,7 @@ export class ProcessingOrchestrator {
                         }
                     );
 
-                    // Step 2: Classify document type
+                    // Step 2: Classify document type using template detection keywords
                     const classifyStep = await this.createStep('classify_document', {
                         documentId: document.id,
                     });
@@ -90,8 +116,9 @@ export class ProcessingOrchestrator {
                         const { DocumentClassifier } = await import('@/lib/processing/classifiers/document-classifier');
                         const template = run.templateSnapshot as any;
                         const templateSlug = template.slug || 'vendor-compliance';
+                        const detectionKeywords = template.detectionKeywords;
 
-                        const classifier = new DocumentClassifier(templateSlug);
+                        const classifier = new DocumentClassifier(templateSlug, detectionKeywords);
                         return classifier.classify(parsedDoc.text);
                     });
 
@@ -136,7 +163,6 @@ export class ProcessingOrchestrator {
                     });
 
                     const chunks = await this.executeStep(chunkStep.id, async () => {
-                        const settings = run.settingsSnapshot as any;
                         const chunkingMethod = settings.chunkingMethod || 'by_pages';
 
                         let chunker;
@@ -158,7 +184,7 @@ export class ProcessingOrchestrator {
                         });
                     });
 
-                    // Step 3: LLM Extraction
+                    // Step 4: LLM Extraction
                     const extractStep = await this.createStep('llm_extraction', {
                         documentId: document.id,
                     });
@@ -181,15 +207,15 @@ export class ProcessingOrchestrator {
                             return await provider.extract({
                                 prompt,
                                 schema: templateConfig.fields,
-                                model: (run.settingsSnapshot as any).model || 'gpt-4o-mini',
-                                temperature: 0.1,
+                                model: settings.model || 'gpt-4o-mini',
+                                temperature: settings.temperature ?? 0.1,
                             });
                         }
                     );
 
                     totalCost += extractionResult.cost;
 
-                    // Step 4: Validation
+                    // Step 5: Validation
                     const validateStep = await this.createStep('validation', {
                         documentId: document.id,
                     });
@@ -210,7 +236,7 @@ export class ProcessingOrchestrator {
                         }
                     );
 
-                    // Step 5: Persist results
+                    // Step 6: Persist results with confidence thresholds
                     const persistStep = await this.createStep('persist_results', {
                         documentId: document.id,
                     });
@@ -226,11 +252,11 @@ export class ProcessingOrchestrator {
                                 runId: this.runId,
                                 documentId: document.id,
                                 overallStatus: 'PENDING_REVIEW',
-                                recordStatus: 'NEEDS_REVIEW', // Will be updated after fields are created
+                                recordStatus: 'NEEDS_REVIEW',
                             },
                         });
 
-                        // Create fields with enhanced validation
+                        // Create fields with confidence thresholds
                         const fieldStatusInfos = [];
                         for (const field of templateConfig.fields) {
                             const fieldName = field.name;
@@ -242,6 +268,17 @@ export class ProcessingOrchestrator {
                                 (v: any) => v.field === fieldName
                             );
 
+                            // Apply confidence thresholds
+                            let isAutoApproved = false;
+                            let fieldStatus = validationResult?.fieldStatus || 'NEEDS_REVIEW';
+
+                            if (confidence >= autoAcceptThreshold && fieldStatus !== 'FAIL_VALIDATION' && fieldStatus !== 'MISSING') {
+                                isAutoApproved = true;
+                                fieldStatus = 'PASS';
+                            } else if (confidence < needsReviewThreshold) {
+                                fieldStatus = 'NEEDS_REVIEW';
+                            }
+
                             await prisma.extractionField.create({
                                 data: {
                                     recordId: record.id,
@@ -251,22 +288,30 @@ export class ProcessingOrchestrator {
                                     confidence,
                                     evidenceJson: evidence ? JSON.parse(JSON.stringify(evidence)) : null,
                                     validationStatus: validationResult?.legacyStatus || 'PASS',
-                                    fieldStatus: validationResult?.fieldStatus || 'NEEDS_REVIEW',
-                                    validationMessages: validationResult?.validationErrors || [],
-                                    validationErrorsJson: validationResult?.validationErrors || [],
+                                    fieldStatus,
+                                    validationMessages: (validationResult?.validationErrors || []) as any,
+                                    validationErrorsJson: (validationResult?.validationErrors || []) as any,
+                                    isApproved: isAutoApproved,
+                                    approvedAt: isAutoApproved ? new Date() : undefined,
                                 },
                             });
 
                             fieldStatusInfos.push({
                                 fieldName,
-                                fieldStatus: validationResult?.fieldStatus || 'NEEDS_REVIEW',
+                                fieldStatus,
                                 isRequired: field.required || false,
                             });
                         }
 
                         // Compute compliance status
                         const complianceResult = computeRecordStatus(fieldStatusInfos);
-                        const coiViolations = checkCOICompliance(extractionResult.data, projectRequirements);
+
+                        // Only run COI-specific compliance for COI templates
+                        let coiViolations: any[] = [];
+                        const templateSlug = templateConfig.slug || '';
+                        if (templateSlug === 'coi' || templateSlug === 'vendor-compliance') {
+                            coiViolations = checkCOICompliance(extractionResult.data, projectRequirements);
+                        }
 
                         const allFailedRules = [
                             ...complianceResult.failedRules,

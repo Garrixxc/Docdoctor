@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Upload, Play } from 'lucide-react';
+import { Upload, Play, Shield, Receipt, User } from 'lucide-react';
+import ProjectSettingsTab from '@/components/ProjectSettingsTab';
 
 export default function ProjectPage() {
     const params = useParams();
@@ -149,14 +150,22 @@ export default function ProjectPage() {
     return (
         <div className="container mx-auto px-4 py-8">
             <div className="mb-8">
-                <h1 className="text-3xl font-bold mb-2">{project.name}</h1>
-                <p className="text-gray-600">{project.template.name}</p>
+                <div className="flex items-center gap-3 mb-2">
+                    <h1 className="text-3xl font-bold">{project.name}</h1>
+                    <Badge variant="outline" className="text-sm">
+                        {project.template.name}
+                    </Badge>
+                </div>
+                <p className="text-gray-500 text-sm">
+                    Template: {project.template.name} · {documents.length} document{documents.length !== 1 ? 's' : ''} · {runs.length} run{runs.length !== 1 ? 's' : ''}
+                </p>
             </div>
 
             <Tabs defaultValue="documents">
                 <TabsList>
                     <TabsTrigger value="documents">Documents</TabsTrigger>
                     <TabsTrigger value="runs">Runs</TabsTrigger>
+                    <TabsTrigger value="settings">Settings</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="documents" className="space-y-4">
@@ -291,6 +300,10 @@ export default function ProjectPage() {
                             </Card>
                         ))}
                     </div>
+                </TabsContent>
+
+                <TabsContent value="settings" className="space-y-4 mt-4">
+                    <ProjectSettingsTab projectId={projectId} />
                 </TabsContent>
             </Tabs>
         </div>

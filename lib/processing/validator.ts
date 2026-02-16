@@ -95,6 +95,54 @@ export function validateExtraction(
                     }
                     break;
 
+                case 'email_format':
+                    if (value && typeof value === 'string') {
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (!emailRegex.test(value)) {
+                            status = 'FAIL';
+                            messages.push(
+                                rule.message || `${rule.field} must be a valid email address`
+                            );
+                        }
+                    }
+                    break;
+
+                case 'line_items_sum_check':
+                    if (value !== null && value !== undefined) {
+                        try {
+                            const totalValue = Number(value);
+                            const lineItemsField = 'line_items';
+                            const lineItemsRaw = data[lineItemsField];
+                            let lineItems: any[] = [];
+
+                            if (typeof lineItemsRaw === 'string') {
+                                lineItems = JSON.parse(lineItemsRaw);
+                            } else if (Array.isArray(lineItemsRaw)) {
+                                lineItems = lineItemsRaw;
+                            }
+
+                            if (lineItems.length > 0) {
+                                const sum = lineItems.reduce(
+                                    (acc: number, item: any) => acc + (Number(item.total) || 0),
+                                    0
+                                );
+                                const tolerance = Math.max(totalValue * 0.05, 1); // 5% or $1
+                                if (Math.abs(totalValue - sum) > tolerance) {
+                                    status = 'WARNING';
+                                    messages.push(
+                                        rule.message ||
+                                        `Total value (${totalValue}) differs from sum of line items (${sum.toFixed(2)}) by more than 5%`
+                                    );
+                                }
+                            }
+                        } catch (e) {
+                            // line_items may not be parsed yet
+                            status = 'WARNING';
+                            messages.push('Could not verify line items sum');
+                        }
+                    }
+                    break;
+
                 default:
                     logger.warn({ rule: rule.rule }, 'Unknown validation rule');
             }

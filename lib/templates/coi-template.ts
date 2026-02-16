@@ -9,6 +9,12 @@ export interface TemplateField {
     required: boolean;
 }
 
+export interface DetectionKeywords {
+    high: string[];
+    medium: string[];
+    low: string[];
+}
+
 export interface TemplateConfig {
     name: string;
     slug: string;
@@ -17,13 +23,57 @@ export interface TemplateConfig {
     fields: TemplateField[];
     validators: ValidationRule[];
     extractionPrompt: string;
+    detectionKeywords?: DetectionKeywords;
+    description?: string;
+    icon?: string;
+    exampleUseCase?: string;
 }
 
+export const COI_DETECTION_KEYWORDS: DetectionKeywords = {
+    high: [
+        'CERTIFICATE OF LIABILITY INSURANCE',
+        'ACORD',
+        'CERTIFICATE HOLDER',
+        'PRODUCER',
+        'INSURED',
+        'POLICY NUMBER',
+        'EFFECTIVE DATE',
+        'EXPIRATION DATE',
+        'GENERAL LIABILITY',
+        'COMMERCIAL GENERAL LIABILITY',
+        'AUTOMOBILE LIABILITY',
+        'WORKERS COMPENSATION',
+        'UMBRELLA LIAB',
+    ],
+    medium: [
+        'INSURANCE',
+        'COVERAGE',
+        'LIMITS',
+        'DEDUCTIBLE',
+        'PREMIUM',
+        'ENDORSEMENT',
+        'AGGREGATE',
+        'OCCURRENCE',
+        'CLAIMS-MADE',
+    ],
+    low: [
+        'LIABILITY',
+        'POLICY',
+        'INSURER',
+        'AGENT',
+        'BROKER',
+    ],
+};
+
 export const COI_TEMPLATE: TemplateConfig = {
-    name: 'Vendor Compliance / Certificate of Insurance',
+    name: 'COI Vendor Compliance',
     slug: 'coi',
     version: '1.0',
     category: 'compliance',
+    description: 'Extract and validate Certificate of Insurance data for vendor compliance. Checks policy numbers, coverage limits, and expiration dates.',
+    icon: 'Shield',
+    exampleUseCase: 'Verify vendor insurance meets your minimum liability requirements before onboarding.',
+    detectionKeywords: COI_DETECTION_KEYWORDS,
     fields: [
         {
             name: 'vendor_name',
