@@ -87,13 +87,13 @@ export default function DashboardPage() {
                 <div className="lg:col-span-8 space-y-4">
                     <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 w-fit">
                         <Sparkles className="w-3.5 h-3.5 text-indigo-600 animate-glow" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-indigo-600">Command Center</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-600">Command Center</span>
                     </div>
                     <div className="space-y-1">
-                        <h1 className="text-5xl font-outfit font-black tracking-tighter text-slate-900 leading-none">
+                        <h1 className="text-4xl font-outfit font-bold tracking-tight text-slate-900 leading-none">
                             Welcome back
                         </h1>
-                        <p className="text-xl text-slate-500 font-medium">Ready to orchestrate your data extractions today?</p>
+                        <p className="text-lg text-slate-500 font-medium">Ready to orchestrate your data extractions today?</p>
                     </div>
                 </div>
 
@@ -102,14 +102,14 @@ export default function DashboardPage() {
                         <div className="noise glass rounded-[2.5rem] p-8 space-y-6 group hover:translate-y-[-4px] transition-all duration-500">
                             <div className="flex justify-between items-start">
                                 <div className="space-y-1">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Monthly Usage</p>
-                                    <h3 className="text-3xl font-outfit font-black text-slate-900">
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Monthly Usage</p>
+                                    <h3 className="text-2xl font-outfit font-bold text-slate-900">
                                         {usage.pagesUsed}
                                         <span className="text-sm font-medium text-slate-400 ml-1">/ {usage.pagesLimit === 'unlimited' ? '∞' : usage.pagesLimit} pages</span>
                                     </h3>
                                 </div>
                                 <div className={cn(
-                                    "px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider",
+                                    "px-2 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider",
                                     usage.tier === 'PRO' ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-600"
                                 )}>
                                     {usage.tier} Tier
@@ -140,7 +140,7 @@ export default function DashboardPage() {
             {/* Verticals Bento Grid */}
             <section className="space-y-8">
                 <div className="flex items-center gap-4">
-                    <h2 className="text-2xl font-outfit font-black tracking-tight text-slate-900">Studio Templates</h2>
+                    <h2 className="text-xl font-outfit font-bold tracking-tight text-slate-900">Studio Templates</h2>
                     <div className="h-[1px] flex-1 bg-slate-100" />
                 </div>
 
@@ -181,7 +181,7 @@ export default function DashboardPage() {
             <section className="space-y-8 pb-20">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="flex items-center gap-4 flex-1">
-                        <h2 className="text-2xl font-outfit font-black tracking-tight text-slate-900 shrink-0">Project Ledger</h2>
+                        <h2 className="text-xl font-outfit font-bold tracking-tight text-slate-900 shrink-0">Project Ledger</h2>
                         <div className="h-[1px] flex-1 bg-slate-100 hidden sm:block" />
                     </div>
 
@@ -196,7 +196,7 @@ export default function DashboardPage() {
                         </div>
                         <Button
                             onClick={() => router.push('/projects/new')}
-                            className="h-12 px-6 rounded-2xl font-black bg-slate-900 hover:bg-slate-800 text-white shadow-xl shadow-slate-200 transition-all active:scale-95 flex items-center justify-center gap-2"
+                            className="h-12 px-6 rounded-2xl font-bold bg-slate-900 hover:bg-slate-800 text-white shadow-xl shadow-slate-200/50 transition-all active:scale-95 flex items-center justify-center gap-2"
                         >
                             <Plus className="w-4 h-4" /> New Studio
                         </Button>
@@ -216,9 +216,9 @@ export default function DashboardPage() {
                                         <BarChart3 className="w-6 h-6" />
                                     </div>
                                     <div>
-                                        <h4 className="text-lg font-outfit font-black text-slate-900 group-hover:text-indigo-600 transition-colors">{project.name}</h4>
+                                        <h4 className="text-base font-outfit font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{project.name}</h4>
                                         <div className="flex items-center gap-3 mt-1.5">
-                                            <Badge className="bg-indigo-100 text-indigo-700 hover:bg-indigo-100 border-none px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider">
+                                            <Badge className="bg-indigo-100 text-indigo-700 hover:bg-indigo-100 border-none px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase tracking-wider">
                                                 {project.template.name}
                                             </Badge>
                                             <div className="flex items-center gap-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest ml-1">
@@ -231,7 +231,7 @@ export default function DashboardPage() {
 
                                 <div className="flex items-center gap-6">
                                     <div className="hidden md:flex flex-col items-end gap-1">
-                                        <span className="text-[9px] font-black text-slate-300 uppercase tracking-[0.2em]">Last Sync</span>
+                                        <span className="text-[9px] font-bold text-slate-300 uppercase tracking-[0.2em]">Last Sync</span>
                                         <span className="text-xs font-bold text-slate-500">{new Date(project.createdAt).toLocaleDateString()}</span>
                                     </div>
                                     <div className="w-10 h-10 rounded-full border border-slate-50 flex items-center justify-center text-slate-300 group-hover:text-indigo-600 group-hover:border-indigo-100 group-hover:bg-indigo-50 transition-all">
@@ -246,12 +246,12 @@ export default function DashboardPage() {
                                 <Plus className="w-10 h-10" />
                             </div>
                             <div className="text-center space-y-2">
-                                <h3 className="text-2xl font-display font-black text-slate-900">Empty Ledger</h3>
+                                <h3 className="text-xl font-display font-bold text-slate-900">Empty Ledger</h3>
                                 <p className="text-slate-500 font-medium">Create your first extraction studio to begin.</p>
                             </div>
                             <Button
                                 onClick={() => router.push('/projects/new')}
-                                className="h-14 px-10 rounded-2xl font-black bg-indigo-600 hover:bg-indigo-700 text-white shadow-2xl shadow-indigo-500/20"
+                                className="h-14 px-10 rounded-2xl font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xl shadow-indigo-500/10"
                             >
                                 Get Started
                             </Button>

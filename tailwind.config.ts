@@ -52,7 +52,7 @@ const config: Config = {
             fontFamily: {
                 sans: ["var(--font-inter)", "Inter", "sans-serif"],
                 outfit: ["var(--font-outfit)", "Outfit", "sans-serif"],
-                display: ["var(--font-outfit)", "Outfit", "sans-serif"],
+                display: ["var(--font-outfit)", "Outfit", "serif"],
             },
             keyframes: {
                 "accordion-down": {

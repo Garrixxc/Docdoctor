@@ -44,7 +44,7 @@ export default async function RootLayout({
                                         <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-xl shadow-indigo-200 group-hover:rotate-6 transition-transform duration-300">
                                             <Sparkles className="w-5 h-5 fill-white/20" />
                                         </div>
-                                        <span className="font-outfit font-black text-2xl tracking-tighter text-slate-900">
+                                        <span className="font-outfit font-bold text-2xl tracking-tight text-slate-900">
                                             DocDoctor
                                         </span>
                                     </a>
@@ -56,7 +56,7 @@ export default async function RootLayout({
                                         </a>
                                         <a href="/projects/new" className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-xl transition-all">
                                             <PlusCircle className="w-4 h-4" />
-                                            Build Project
+                                            Build Studio
                                         </a>
                                     </div>
                                 </div>

@@ -141,16 +141,16 @@ function NewProjectContent() {
                         <ArrowLeft className="w-5 h-5 text-slate-600" />
                     </Button>
                     <div className="space-y-2">
-                        <h1 className="text-5xl font-outfit font-black text-slate-900 tracking-tighter leading-none">New Project Studio</h1>
-                        <p className="text-xl text-slate-500 font-medium">Configure your industrial datasets for scale.</p>
+                        <h1 className="text-4xl font-outfit font-bold text-slate-900 tracking-tight leading-none">New Project Studio</h1>
+                        <p className="text-lg text-slate-500 font-medium">Configure your industrial datasets for scale.</p>
                     </div>
                 </div>
 
                 {/* Evolution Meter */}
                 <div className="flex flex-col gap-4 min-w-[300px] noise glass p-6 rounded-[2rem]">
-                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-indigo-600">
+                    <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-indigo-600">
                         <span>Project Evolution</span>
-                        <span className="text-slate-400">{Math.round((step / 3) * 100)}% Processed</span>
+                        <span className="text-slate-400">{Math.round((step / 3) * 100)}% Complete</span>
                     </div>
                     <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden p-[2px]">
                         <div
@@ -168,9 +168,9 @@ function NewProjectContent() {
                         <button
                             onClick={() => { if (s.id < step) setStep(s.id); }}
                             className={cn(
-                                "flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-black transition-all border",
+                                "flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold transition-all border",
                                 s.id === step
-                                    ? "bg-white border-indigo-600 text-indigo-600 shadow-2xl shadow-indigo-500/10"
+                                    ? "bg-white border-indigo-600 text-indigo-600 shadow-xl shadow-indigo-500/5"
                                     : s.id < step
                                         ? "bg-indigo-50 border-transparent text-indigo-700 hover:bg-indigo-100"
                                         : "bg-white border-slate-100 text-slate-300 opacity-60 pointer-events-none"
@@ -195,7 +195,7 @@ function NewProjectContent() {
                 {step === 1 && (
                     <div className="space-y-12 animate-slide-up">
                         <div className="text-center space-y-4 max-w-2xl mx-auto">
-                            <h2 className="text-4xl font-outfit font-black text-slate-900 tracking-tight leading-tight">Select Infrastructure</h2>
+                            <h2 className="text-3xl font-outfit font-bold text-slate-900 tracking-tight leading-tight">Select Infrastructure</h2>
                             <p className="text-slate-500 font-medium text-lg">Choose a plan that matches your project scale.</p>
                         </div>
 
@@ -205,7 +205,7 @@ function NewProjectContent() {
                             <Button
                                 onClick={() => setStep(2)}
                                 size="lg"
-                                className="h-16 px-12 rounded-[1.25rem] text-lg font-black bg-slate-900 hover:bg-slate-800 text-white shadow-2xl transition-all active:scale-95 flex items-center gap-3"
+                                className="h-16 px-12 rounded-[1.25rem] text-lg font-bold bg-slate-900 hover:bg-slate-800 text-white shadow-xl transition-all active:scale-95 flex items-center gap-3"
                             >
                                 Configure Studio <ArrowRight className="w-6 h-6" />
                             </Button>
@@ -217,23 +217,23 @@ function NewProjectContent() {
                 {step === 2 && (
                     <div className="grid lg:grid-cols-12 gap-12 animate-slide-up">
                         <div className="lg:col-span-8 space-y-12">
-                            <section className="space-y-8">
-                                <h2 className="text-3xl font-outfit font-black text-slate-900 leading-tight">Project Identity</h2>
-                                <div className="space-y-4">
-                                    <Label htmlFor="name" className="text-xs font-black uppercase tracking-widest text-slate-500 ml-1">Studio Name</Label>
+                            <section className="space-y-6">
+                                <h2 className="text-2xl font-outfit font-bold text-slate-900 leading-tight">Project Identity</h2>
+                                <div className="space-y-3">
+                                    <Label htmlFor="name" className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Studio Name</Label>
                                     <Input
                                         id="name"
                                         value={formData.name}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                         placeholder="e.g., Q1 2026 COI Compliance Audit"
-                                        className="h-16 px-8 rounded-2xl text-xl border-slate-100 bg-slate-50/50 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-outfit font-black"
+                                        className="h-14 px-6 rounded-xl text-lg border-slate-200 bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-outfit font-bold"
                                     />
                                 </div>
                             </section>
 
-                            <section className="space-y-8">
+                            <section className="space-y-6">
                                 <div className="flex items-center gap-4">
-                                    <h2 className="text-2xl font-outfit font-black text-slate-900 tracking-tight">Industrial Requirements</h2>
+                                    <h2 className="text-xl font-outfit font-bold text-slate-900 tracking-tight">Industrial Requirements</h2>
                                     <div className="h-[1px] flex-1 bg-slate-100" />
                                 </div>
                                 {selectedTemplate ? (
@@ -242,19 +242,22 @@ function NewProjectContent() {
                                             <Brain className="w-32 h-32 text-indigo-600" />
                                         </div>
                                         <div className="flex items-center gap-6 relative z-10">
-                                            <div className="w-16 h-16 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-xl shadow-indigo-200">
-                                                <Zap className="w-8 h-8 fill-white/20" />
+                                            <div className="w-14 h-14 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-100">
+                                                <Zap className="w-7 h-7 fill-white/20" />
                                             </div>
                                             <div>
-                                                <h4 className="text-xl font-outfit font-black text-slate-900">{selectedTemplate.name}</h4>
-                                                <p className="text-slate-500 font-medium">{selectedTemplate.category} Vertical Intelligence</p>
+                                                <h4 className="text-lg font-outfit font-bold text-slate-900">{selectedTemplate.name}</h4>
+                                                <p className="text-sm text-slate-500 font-medium">{selectedTemplate.category} Vertical Intelligence</p>
                                             </div>
                                         </div>
 
                                         {selectedTemplate.slug === 'coi' ? (
-                                            <div className="grid md:grid-cols-2 gap-8 relative z-10">
-                                                <div className="space-y-3">
-                                                    <Label htmlFor="minLiability" className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Min Liability ($)</Label>
+                                            <div className="grid md:grid-cols-2 gap-6 relative z-10">
+                                                <div className="space-y-2">
+                                                    <div className="flex items-center justify-between">
+                                                        <Label htmlFor="minLiability" className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Min Liability ($)</Label>
+                                                        <Badge variant="outline" className="text-[9px] font-medium border-slate-100 text-slate-400">Per Occurrence</Badge>
+                                                    </div>
                                                     <Input
                                                         id="minLiability"
                                                         type="number"
@@ -264,11 +267,15 @@ function NewProjectContent() {
                                                             requirements: { ...formData.requirements, minLiabilityPerOccurrence: Number(e.target.value) }
                                                         })}
                                                         placeholder="1,000,000"
-                                                        className="h-14 px-6 rounded-xl border-slate-200 bg-white font-black"
+                                                        className="h-12 px-5 rounded-xl border-slate-200 bg-white font-bold"
                                                     />
+                                                    <p className="text-[9px] text-slate-400 ml-1 italic font-medium">Max payout per single claim event.</p>
                                                 </div>
-                                                <div className="space-y-3">
-                                                    <Label htmlFor="minAggregate" className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Min Aggregate ($)</Label>
+                                                <div className="space-y-2">
+                                                    <div className="flex items-center justify-between">
+                                                        <Label htmlFor="minAggregate" className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Min Aggregate ($)</Label>
+                                                        <Badge variant="outline" className="text-[9px] font-medium border-slate-100 text-slate-400">Total Policy Limit</Badge>
+                                                    </div>
                                                     <Input
                                                         id="minAggregate"
                                                         type="number"
@@ -278,20 +285,21 @@ function NewProjectContent() {
                                                             requirements: { ...formData.requirements, minGeneralAggregate: Number(e.target.value) }
                                                         })}
                                                         placeholder="2,000,000"
-                                                        className="h-14 px-6 rounded-xl border-slate-200 bg-white font-black"
+                                                        className="h-12 px-5 rounded-xl border-slate-200 bg-white font-bold"
                                                     />
+                                                    <p className="text-[9px] text-slate-400 ml-1 italic font-medium">Max payout for all claims combined.</p>
                                                 </div>
                                             </div>
                                         ) : (
-                                            <div className="py-6 text-center bg-white/50 rounded-3xl border border-white relative z-10">
-                                                <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Standard Intelligent Field Mapping Active</p>
+                                            <div className="py-5 text-center bg-white/50 rounded-2xl border border-white relative z-10">
+                                                <p className="text-slate-400 font-bold uppercase tracking-widest text-[9px]">Standard Intelligent Field Mapping Active</p>
                                             </div>
                                         )}
                                         <Button
                                             variant="ghost"
                                             size="sm"
                                             onClick={() => setFormData({ ...formData, templateId: '' })}
-                                            className="text-[10px] font-black uppercase tracking-widest text-indigo-600 hover:bg-white"
+                                            className="text-[10px] font-bold uppercase tracking-widest text-indigo-600 hover:bg-white"
                                         >
                                             Change Template
                                         </Button>
@@ -305,24 +313,24 @@ function NewProjectContent() {
                                                     <button
                                                         key={t.id}
                                                         onClick={() => setFormData({ ...formData, templateId: t.id })}
-                                                        className="group p-6 rounded-3xl bg-white border border-slate-100 hover:border-indigo-600 hover:shadow-2xl transition-all text-left flex items-center justify-between"
+                                                        className="group p-5 rounded-2xl bg-white border border-slate-100 hover:border-indigo-600 hover:shadow-xl transition-all text-left flex items-center justify-between"
                                                     >
                                                         <div className="flex items-center gap-4">
-                                                            <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 group-hover:border-indigo-100 transition-all">
-                                                                <Brain className="w-6 h-6" />
+                                                            <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 group-hover:border-indigo-100 transition-all">
+                                                                <Brain className="w-5 h-5" />
                                                             </div>
                                                             <div>
-                                                                <h4 className="font-outfit font-black text-slate-900 leading-tight">{t.name}</h4>
-                                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{t.category}</p>
+                                                                <h4 className="font-outfit font-bold text-slate-900 leading-tight">{t.name}</h4>
+                                                                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{t.category}</p>
                                                             </div>
                                                         </div>
                                                         <ArrowRight className="w-4 h-4 text-slate-200 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all" />
                                                     </button>
                                                 ))
                                             ) : (
-                                                <div className="col-span-2 p-14 rounded-[2rem] bg-slate-50 border border-slate-100 flex flex-col items-center justify-center text-center space-y-3">
-                                                    <Clock className="w-8 h-8 text-slate-300 animate-spin" />
-                                                    <p className="text-sm font-black text-slate-400 uppercase tracking-widest">Hydrating Vertical Models...</p>
+                                                <div className="col-span-2 p-10 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col items-center justify-center text-center space-y-3">
+                                                    <Clock className="w-6 h-6 text-slate-300 animate-spin" />
+                                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Hydrating Vertical Models...</p>
                                                 </div>
                                             )}
                                         </div>
@@ -331,13 +339,13 @@ function NewProjectContent() {
                             </section>
 
                             <div className="flex justify-between items-center pt-8">
-                                <Button variant="ghost" onClick={() => setStep(1)} className="h-14 px-8 rounded-2xl font-black text-slate-500 hover:text-indigo-600 transition-colors">
+                                <Button variant="ghost" onClick={() => setStep(1)} className="h-14 px-8 rounded-2xl font-bold text-slate-500 hover:text-indigo-600 transition-colors">
                                     <ArrowLeft className="w-5 h-5 mr-3" /> Previous Step
                                 </Button>
                                 <Button
                                     onClick={() => setStep(3)}
                                     disabled={!formData.name || !formData.templateId}
-                                    className="h-16 px-12 rounded-[1.25rem] text-lg font-black bg-indigo-600 hover:bg-indigo-700 text-white shadow-2xl shadow-indigo-500/10 transition-all active:scale-95 flex items-center gap-3"
+                                    className="h-16 px-12 rounded-[1.25rem] text-lg font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xl shadow-indigo-500/5 transition-all active:scale-95 flex items-center gap-3"
                                 >
                                     Orchestration Review <ArrowRight className="w-6 h-6" />
                                 </Button>
@@ -348,35 +356,35 @@ function NewProjectContent() {
                         <div className="lg:col-span-4 space-y-6">
                             <div className="noise glass rounded-[2.5rem] p-8 space-y-8 sticky top-32 border border-white/40 shadow-2xl shadow-slate-200/50">
                                 <div className="space-y-1 text-center lg:text-left">
-                                    <h3 className="text-2xl font-outfit font-black text-slate-900 tracking-tight leading-none">Studio Setup</h3>
-                                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest px-1">Build phase summary</p>
+                                    <h3 className="text-xl font-outfit font-bold text-slate-900 tracking-tight leading-none">Studio Setup</h3>
+                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest px-1">Build phase summary</p>
                                 </div>
 
                                 <div className="space-y-6 bg-white/40 rounded-3xl p-6 border border-white/60">
                                     <div className="flex justify-between items-center px-1">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Plan</span>
-                                        <Badge variant="outline" className="bg-gradient-to-r from-indigo-50 to-blue-50 text-indigo-700 border-indigo-100 font-black px-3 py-1 rounded-lg">{plan}</Badge>
+                                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Plan</span>
+                                        <Badge variant="outline" className="bg-gradient-to-r from-indigo-50 to-blue-50 text-indigo-700 border-indigo-100 font-bold px-3 py-1 rounded-lg">{plan}</Badge>
                                     </div>
                                     <div className="flex justify-between items-center px-1">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Vertical</span>
-                                        <span className="text-sm font-black text-slate-900">{selectedTemplate?.name || 'Pending'}</span>
+                                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Vertical</span>
+                                        <span className="text-sm font-bold text-slate-900">{selectedTemplate?.name || 'Pending'}</span>
                                     </div>
                                     <div className="flex justify-between items-center px-1">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Monthly Capacity</span>
-                                        <span className="text-sm font-black text-slate-900">{plan === 'FREE' ? '50 Pages' : 'Unlimited'}</span>
+                                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Monthly Capacity</span>
+                                        <span className="text-sm font-bold text-slate-900">{plan === 'FREE' ? '50 Pages' : 'Unlimited'}</span>
                                     </div>
                                 </div>
 
-                                <div className="p-6 rounded-[2rem] bg-indigo-600 text-white space-y-4 shadow-xl shadow-indigo-200 isolation-auto relative overflow-hidden group">
+                                <div className="p-6 rounded-[1.5rem] bg-indigo-600 text-white space-y-4 shadow-lg shadow-indigo-100 isolation-auto relative overflow-hidden group">
                                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-700">
-                                        <Sparkles className="w-20 h-20" />
+                                        <Sparkles className="w-16 h-16" />
                                     </div>
-                                    <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest opacity-80 relative z-10">
+                                    <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest opacity-80 relative z-10">
                                         <Sparkles className="w-4 h-4 fill-white/20" />
                                         Model Specification
                                     </div>
-                                    <div className="text-3xl font-outfit font-black tracking-tight relative z-10">{plan === 'FREE' ? 'GPT-4o-mini' : 'GPT-4o'}</div>
-                                    <p className="text-[10px] opacity-70 font-semibold tracking-wide leading-relaxed uppercase relative z-10">Optimized for high-fidelity industrial extraction architecture.</p>
+                                    <div className="text-2xl font-outfit font-bold tracking-tight relative z-10">{plan === 'FREE' ? 'GPT-4o-mini' : 'GPT-4o'}</div>
+                                    <p className="text-[9px] opacity-70 font-semibold tracking-wide leading-relaxed uppercase relative z-10">Optimized for high-fidelity industrial extraction architecture.</p>
                                 </div>
                             </div>
                         </div>
@@ -386,13 +394,13 @@ function NewProjectContent() {
                 {/* Step 3: Deployment */}
                 {step === 3 && (
                     <div className="max-w-4xl mx-auto space-y-12 animate-slide-up pb-20">
-                        <div className="text-center space-y-6">
-                            <div className="w-24 h-24 rounded-[2.5rem] bg-indigo-600 text-white flex items-center justify-center mx-auto shadow-2xl shadow-indigo-500/20 group">
-                                <Sparkles className="w-12 h-12 fill-white/20 group-hover:scale-110 transition-transform duration-500" />
+                        <div className="text-center space-y-4">
+                            <div className="w-20 h-20 rounded-[2rem] bg-indigo-600 text-white flex items-center justify-center mx-auto shadow-xl shadow-indigo-100 group">
+                                <Sparkles className="w-10 h-10 fill-white/20 group-hover:scale-110 transition-transform duration-500" />
                             </div>
-                            <div className="space-y-2">
-                                <h1 className="text-6xl font-outfit font-black text-slate-900 tracking-tighter leading-none">Project Orchestration</h1>
-                                <p className="text-xl text-slate-500 font-medium">Verify your intelligence parameters before studio deployment.</p>
+                            <div className="space-y-1">
+                                <h1 className="text-5xl font-outfit font-bold text-slate-900 tracking-tight leading-none">Project Orchestration</h1>
+                                <p className="text-lg text-slate-500 font-medium">Verify your intelligence parameters before studio deployment.</p>
                             </div>
                         </div>
 
@@ -400,47 +408,47 @@ function NewProjectContent() {
                             <div className="p-10 rounded-[3rem] bg-white border border-slate-100 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] space-y-12 relative overflow-hidden">
                                 <div className="absolute inset-0 grid-bg opacity-[0.05] pointer-events-none" />
 
-                                <div className="grid md:grid-cols-2 gap-16 relative z-10">
-                                    <div className="space-y-2">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Studio Configuration</span>
-                                        <p className="text-2xl font-outfit font-black text-slate-900 leading-tight">{formData.name}</p>
+                                <div className="grid md:grid-cols-2 gap-12 relative z-10">
+                                    <div className="space-y-1">
+                                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Studio Configuration</span>
+                                        <p className="text-xl font-outfit font-bold text-slate-900 leading-tight">{formData.name}</p>
                                     </div>
-                                    <div className="space-y-2">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Model Architecture</span>
-                                        <div className="flex items-center gap-3 text-2xl font-outfit font-black text-indigo-600">
-                                            <Zap className="w-6 h-6 fill-indigo-100" />
+                                    <div className="space-y-1">
+                                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Model Architecture</span>
+                                        <div className="flex items-center gap-2 text-xl font-outfit font-bold text-indigo-600">
+                                            <Zap className="w-5 h-5 fill-indigo-100" />
                                             {selectedTemplate?.name} Intelligence
                                         </div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Resource Tier</span>
-                                        <div className="flex items-center gap-3 text-2xl font-outfit font-black text-slate-900">
-                                            {plan === 'FREE' ? <Badge className="bg-slate-100 text-slate-600">Free</Badge> : <Badge className="bg-indigo-600 text-white border-none">PRO (BYO)</Badge>}
-                                            <span className="text-slate-400 font-medium">/ {plan === 'FREE' ? '50 Pg' : 'Unlimited'}</span>
+                                    <div className="space-y-1">
+                                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Resource Tier</span>
+                                        <div className="flex items-center gap-2 text-xl font-outfit font-bold text-slate-900">
+                                            {plan === 'FREE' ? <Badge className="bg-slate-100 text-slate-600 font-bold">Free</Badge> : <Badge className="bg-indigo-600 text-white border-none font-bold">PRO (BYO)</Badge>}
+                                            <span className="text-slate-400 font-medium whitespace-nowrap">/ {plan === 'FREE' ? '50 Pg' : 'Unlimited'}</span>
                                         </div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Extraction Engine</span>
-                                        <p className="text-2xl font-outfit font-black text-slate-900">{plan === 'FREE' ? 'GPT-4o-mini' : 'GPT-4o'}</p>
+                                    <div className="space-y-1">
+                                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Extraction Engine</span>
+                                        <p className="text-xl font-outfit font-bold text-slate-900">{plan === 'FREE' ? 'GPT-4o-mini' : 'GPT-4o'}</p>
                                     </div>
                                 </div>
 
                                 <div className="h-[1px] bg-slate-100 flex items-center justify-center">
-                                    <div className="bg-white px-6 text-[11px] font-black text-slate-300 uppercase tracking-[0.3em]">Specs Ledger</div>
+                                    <div className="bg-white px-6 text-[10px] font-bold text-slate-300 uppercase tracking-[0.3em]">Specs Ledger</div>
                                 </div>
 
-                                <div className="grid md:grid-cols-3 gap-8 relative z-10">
-                                    <div className="p-6 rounded-3xl bg-slate-50 border border-slate-100/50 space-y-1">
-                                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">Orchestrator</span>
-                                        <span className="text-base font-black text-slate-700">{plan === 'FREE' ? 'Shared' : 'Dedicated (BYO)'}</span>
+                                <div className="grid md:grid-cols-3 gap-6 relative z-10">
+                                    <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100/50 space-y-1">
+                                        <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 block">Orchestrator</span>
+                                        <span className="text-sm font-bold text-slate-700">{plan === 'FREE' ? 'Shared' : 'Dedicated (BYO)'}</span>
                                     </div>
-                                    <div className="p-6 rounded-3xl bg-slate-50 border border-slate-100/50 space-y-1">
-                                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">Chunk Methodology</span>
-                                        <span className="text-base font-black text-slate-700">{plan === 'FREE' ? 'Linear (Page)' : 'Semantic (Headings)'}</span>
+                                    <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100/50 space-y-1">
+                                        <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 block">Chunk Methodology</span>
+                                        <span className="text-sm font-bold text-slate-700">{plan === 'FREE' ? 'Linear (Page)' : 'Semantic (Headings)'}</span>
                                     </div>
-                                    <div className="p-6 rounded-3xl bg-slate-50 border border-slate-100/50 space-y-1">
-                                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">Precision export</span>
-                                        <span className="text-base font-black text-slate-700">{plan === 'FREE' ? 'CSV Only' : 'CSV, JSON, SQL'}</span>
+                                    <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100/50 space-y-1">
+                                        <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 block">Precision export</span>
+                                        <span className="text-sm font-bold text-slate-700">{plan === 'FREE' ? 'CSV Only' : 'CSV, JSON, SQL'}</span>
                                     </div>
                                 </div>
                             </div>
@@ -456,13 +464,13 @@ function NewProjectContent() {
                         </div>
 
                         <div className="flex flex-col md:flex-row justify-between items-center gap-8 pt-10">
-                            <Button variant="ghost" onClick={() => setStep(2)} className="h-16 px-10 rounded-2xl font-black text-slate-400 hover:text-indigo-600 transition-colors">
+                            <Button variant="ghost" onClick={() => setStep(2)} className="h-16 px-10 rounded-2xl font-bold text-slate-400 hover:text-indigo-600 transition-colors">
                                 <ArrowLeft className="w-5 h-5 mr-3" /> Adjustment required
                             </Button>
                             <Button
                                 onClick={handleSubmit}
                                 disabled={loading}
-                                className="h-20 px-16 rounded-[1.5rem] text-2xl font-black bg-indigo-600 hover:bg-slate-900 text-white shadow-[0_20px_40px_-10px_rgba(79,70,229,0.3)] hover:translate-y-[-4px] active:scale-95 transition-all flex items-center gap-4"
+                                className="h-20 px-16 rounded-[1.25rem] text-xl font-bold bg-indigo-600 hover:bg-slate-900 text-white shadow-xl shadow-indigo-100 hover:translate-y-[-4px] active:scale-95 transition-all flex items-center gap-4"
                             >
                                 {loading ? (
                                     <>

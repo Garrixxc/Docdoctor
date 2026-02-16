@@ -63,7 +63,7 @@ export default function VerticalCard({
                         <Icon className="h-8 w-8 text-white" />
                     </div>
                     {badge && (
-                        <div className="px-3 py-1 rounded-full bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest animate-fade-in">
+                        <div className="px-3 py-1 rounded-full bg-slate-900 text-white text-[9px] font-bold uppercase tracking-widest animate-fade-in">
                             {badge}
                         </div>
                     )}
@@ -71,7 +71,7 @@ export default function VerticalCard({
 
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-3xl font-outfit font-black text-slate-900 group-hover:text-indigo-600 transition-colors leading-tight">
+                        <h3 className="text-2xl font-outfit font-bold text-slate-900 group-hover:text-indigo-600 transition-colors leading-tight">
                             {title}
                         </h3>
                     </div>
@@ -83,12 +83,12 @@ export default function VerticalCard({
 
                 <div className="mt-auto pt-10 flex items-center justify-between">
                     {stats ? (
-                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                             {stats}
                         </span>
                     ) : <div />}
 
-                    <div className="flex items-center gap-2 text-sm font-black text-indigo-600 transition-all duration-500 group-hover:translate-x-1">
+                    <div className="flex items-center gap-2 text-sm font-bold text-indigo-600 transition-all duration-500 group-hover:translate-x-1">
                         Explore <ArrowRight className="h-4 w-4" />
                     </div>
                 </div>
