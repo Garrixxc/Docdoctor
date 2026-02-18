@@ -5,9 +5,23 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Shield, FileText, Users, Clock, ArrowRight, BarChart3, MoreVertical, Search, Sparkles, Zap } from 'lucide-react';
-import VerticalCard from '@/components/VerticalCard';
+import {
+    Plus,
+    FileText,
+    ArrowRight,
+    BarChart3,
+    Search,
+    Zap,
+    MoreVertical,
+    Clock
+} from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface Project {
     id: string;
@@ -28,14 +42,13 @@ export default function DashboardPage() {
     const [projects, setProjects] = useState<Project[]>([]);
     const [usage, setUsage] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-    const [workspaceId, setWorkspaceId] = useState<string | null>(null);
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         let isMounted = true;
 
         async function loadData() {
             try {
-                // Get usage and workspace info
                 const usageRes = await fetch('/api/usage');
                 if (!usageRes.ok) {
                     if (usageRes.status === 401) {
@@ -46,16 +59,8 @@ export default function DashboardPage() {
                 }
 
                 const usageData = await usageRes.json();
-                if (!usageData.workspace) {
-                    console.warn('Dashboard: No workspace found');
-                    if (isMounted) setLoading(false);
-                    return;
-                }
-
                 if (isMounted) {
                     setUsage(usageData.usage);
-                    setWorkspaceId(usageData.workspace.id);
-                    // Use usageData.user.name or email if available, otherwise session name
                     setProjects(usageData.projects || []);
                 }
             } catch (error) {
@@ -69,196 +74,164 @@ export default function DashboardPage() {
         return () => { isMounted = false; };
     }, [router]);
 
+    const filteredProjects = projects.filter(project =>
+        project.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     if (loading) {
         return (
-            <div className="container mx-auto px-4 py-12 space-y-8 animate-pulse">
-                <div className="h-32 bg-gray-100 rounded-3xl" />
-                <div className="grid md:grid-cols-3 gap-8">
-                    {[1, 2, 3].map(i => <div key={i} className="h-64 bg-gray-100 rounded-3xl" />)}
+            <div className="space-y-8 animate-pulse">
+                <div className="flex justify-between items-end">
+                    <div className="space-y-2">
+                        <div className="h-10 w-48 bg-slate-200 rounded-lg" />
+                        <div className="h-4 w-64 bg-slate-100 rounded-lg" />
+                    </div>
+                    <div className="h-10 w-32 bg-slate-200 rounded-lg" />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {[1, 2, 3].map(i => <div key={i} className="h-48 bg-slate-100 rounded-xl" />)}
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="container mx-auto px-6 py-10 space-y-16 animate-fade-in relative z-10">
-            {/* Command Center Header */}
-            <div className="grid lg:grid-cols-12 gap-6">
-                <div className="lg:col-span-8 space-y-4">
-                    <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 w-fit">
-                        <Sparkles className="w-3.5 h-3.5 text-indigo-600 animate-glow" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-600">Command Center</span>
-                    </div>
-                    <div className="space-y-1">
-                        <h1 className="text-4xl font-outfit font-bold tracking-tight text-slate-900 leading-none">
-                            Welcome back
-                        </h1>
-                        <p className="text-lg text-slate-500 font-medium">Ready to orchestrate your data extractions today?</p>
-                    </div>
+        <div className="space-y-10">
+            {/* Page Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-outfit font-bold text-slate-900">Projects</h1>
+                    <p className="text-slate-500 mt-1">Manage your document extraction studios</p>
                 </div>
-
-                <div className="lg:col-span-4">
-                    {usage && (
-                        <div className="noise glass rounded-[2.5rem] p-8 space-y-6 group hover:translate-y-[-4px] transition-all duration-500">
-                            <div className="flex justify-between items-start">
-                                <div className="space-y-1">
-                                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Monthly Usage</p>
-                                    <h3 className="text-2xl font-outfit font-bold text-slate-900">
-                                        {usage.pagesUsed}
-                                        <span className="text-sm font-medium text-slate-400 ml-1">/ {usage.pagesLimit === 'unlimited' ? '∞' : usage.pagesLimit} pages</span>
-                                    </h3>
-                                </div>
-                                <div className={cn(
-                                    "px-2 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider",
-                                    usage.tier === 'PRO' ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-600"
-                                )}>
-                                    {usage.tier} Tier
-                                </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden p-[2px]">
-                                    <div
-                                        className="h-full bg-indigo-600 rounded-full transition-all duration-1000 ease-out shadow-[0_0_12px_rgba(79,70,229,0.3)]"
-                                        style={{ width: `${usage.percentUsed}%` }}
-                                    />
-                                </div>
-                                <div className="flex justify-between text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                                    <span>{usage.percentUsed}% consumed</span>
-                                    {usage.tier !== 'PRO' && (
-                                        <a href="/workspaces/settings" className="text-indigo-600 hover:underline flex items-center gap-1">
-                                            Scale Up <ArrowRight className="w-2.5 h-2.5" />
-                                        </a>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
+                <Button
+                    onClick={() => router.push('/projects/new')}
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold h-11 px-6 rounded-lg shadow-sm"
+                >
+                    <Plus className="w-4 h-4 mr-2" />
+                    New Project
+                </Button>
             </div>
 
-            {/* Verticals Bento Grid */}
-            <section className="space-y-8">
-                <div className="flex items-center gap-4">
-                    <h2 className="text-xl font-outfit font-bold tracking-tight text-slate-900">Studio Templates</h2>
-                    <div className="h-[1px] flex-1 bg-slate-100" />
-                </div>
-
-                <div className="grid md:grid-cols-12 gap-6 h-auto md:h-[450px]">
-                    <div className="md:col-span-7 h-full">
-                        <VerticalCard
-                            title="Vendor Compliance"
-                            description="Deep validation of Certificate of Insurance docs with COI requirements matching."
-                            icon={Shield}
-                            color="blue"
-                            href="/projects/new?template=vendor-compliance"
-                            className="h-full border-none shadow-none bg-slate-50 relative overflow-hidden group"
-                            badge="High Accuracy"
-                        />
-                    </div>
-                    <div className="md:col-span-5 grid grid-rows-2 gap-6 h-full">
-                        <VerticalCard
-                            title="Trade Invoices"
-                            description="Line-item extraction and tax validation."
-                            icon={FileText}
-                            color="emerald"
-                            href="/projects/new?template=trade-invoice"
-                            className="border-none shadow-none bg-emerald-50 relative overflow-hidden"
-                        />
-                        <VerticalCard
-                            title="HR & Resumes"
-                            description="Structured talent data from PDFs."
-                            icon={Users}
-                            color="purple"
-                            href="/projects/new?template=resume"
-                            className="border-none shadow-none bg-purple-50 relative overflow-hidden"
-                        />
-                    </div>
-                </div>
-            </section>
-
-            {/* Project Ledger */}
-            <section className="space-y-8 pb-20">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div className="flex items-center gap-4 flex-1">
-                        <h2 className="text-xl font-outfit font-bold tracking-tight text-slate-900 shrink-0">Project Ledger</h2>
-                        <div className="h-[1px] flex-1 bg-slate-100 hidden sm:block" />
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-                        <div className="relative group flex-1 sm:flex-none">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
-                            <input
-                                type="text"
-                                placeholder="Search the ledger..."
-                                className="pl-11 pr-6 h-12 rounded-2xl bg-slate-50 border-transparent transition-all focus:bg-white focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-100 text-sm font-medium w-full sm:w-64"
-                            />
-                        </div>
-                        <Button
-                            onClick={() => router.push('/projects/new')}
-                            className="h-12 px-6 rounded-2xl font-bold bg-slate-900 hover:bg-slate-800 text-white shadow-xl shadow-slate-200/50 transition-all active:scale-95 flex items-center justify-center gap-2"
-                        >
-                            <Plus className="w-4 h-4" /> New Studio
-                        </Button>
-                    </div>
-                </div>
-
-                <div className="space-y-4">
-                    {projects.length > 0 ? (
-                        projects.map((project) => (
-                            <div
-                                key={project.id}
-                                onClick={() => router.push(`/projects/${project.id}`)}
-                                className="group p-6 rounded-[2rem] bg-white border border-slate-50 hover:border-indigo-100 hover:shadow-2xl hover:shadow-indigo-500/5 transition-all cursor-pointer flex items-center justify-between"
-                            >
-                                <div className="flex items-center gap-6">
-                                    <div className="w-14 h-14 rounded-[1.25rem] bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 group-hover:border-indigo-100 transition-all">
-                                        <BarChart3 className="w-6 h-6" />
-                                    </div>
+            {/* Top Stats / Usage */}
+            {usage && (
+                <Card className="bg-white border-slate-200 shadow-sm overflow-hidden">
+                    <CardContent className="p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-8">
+                        <div className="space-y-4 flex-1">
+                            <div className="flex items-center justify-between md:justify-start md:gap-4">
+                                <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">Usage Progress</span>
+                                <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-blue-100 font-bold">
+                                    {usage.tier} Tier
+                                </Badge>
+                            </div>
+                            <div className="relative pt-1">
+                                <div className="flex mb-2 items-center justify-between">
                                     <div>
-                                        <h4 className="text-base font-outfit font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{project.name}</h4>
-                                        <div className="flex items-center gap-3 mt-1.5">
-                                            <Badge className="bg-indigo-100 text-indigo-700 hover:bg-indigo-100 border-none px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase tracking-wider">
-                                                {project.template.name}
-                                            </Badge>
-                                            <div className="flex items-center gap-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest ml-1">
-                                                <span className="flex items-center gap-1.5"><FileText className="w-3 h-3" /> {project._count?.documents || 0} Docs</span>
-                                                <span className="flex items-center gap-1.5"><Zap className="w-3 h-3" /> {project._count?.runs || 0} Runs</span>
-                                            </div>
-                                        </div>
+                                        <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-blue-600 bg-blue-100">
+                                            {usage.pagesUsed} / {usage.pagesLimit === 'unlimited' ? '∞' : usage.pagesLimit} pages
+                                        </span>
+                                    </div>
+                                    <div className="text-right">
+                                        <span className="text-xs font-semibold inline-block text-blue-600 uppercase">
+                                            {usage.percentUsed}%
+                                        </span>
                                     </div>
                                 </div>
+                                <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blue-50">
+                                    <div
+                                        style={{ width: `${usage.percentUsed}%` }}
+                                        className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-600 transition-all duration-1000"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        {usage.tier !== 'PRO' && (
+                            <Button variant="outline" className="border-slate-200 hover:bg-slate-50 text-slate-900 font-bold" onClick={() => router.push('/workspaces/settings')}>
+                                Scale Workspace
+                            </Button>
+                        )}
+                    </CardContent>
+                </Card>
+            )}
 
-                                <div className="flex items-center gap-6">
-                                    <div className="hidden md:flex flex-col items-end gap-1">
-                                        <span className="text-[9px] font-bold text-slate-300 uppercase tracking-[0.2em]">Last Sync</span>
-                                        <span className="text-xs font-bold text-slate-500">{new Date(project.createdAt).toLocaleDateString()}</span>
+            {/* Project Grid */}
+            <div className="space-y-6">
+                <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <input
+                        type="text"
+                        placeholder="Search projects..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all"
+                    />
+                </div>
+
+                {filteredProjects.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {filteredProjects.map((project) => (
+                            <Card
+                                key={project.id}
+                                className="group bg-white border-slate-200 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer rounded-xl overflow-hidden"
+                                onClick={() => router.push(`/projects/${project.id}`)}
+                            >
+                                <CardHeader className="pb-4">
+                                    <div className="flex justify-between items-start">
+                                        <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 group-hover:border-blue-100 transition-colors">
+                                            <BarChart3 className="w-5 h-5" />
+                                        </div>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                                    <MoreVertical className="w-4 h-4" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end">
+                                                <DropdownMenuItem onClick={() => router.push(`/projects/${project.id}`)}>
+                                                    View Project
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem>
+                                                    Settings
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     </div>
-                                    <div className="w-10 h-10 rounded-full border border-slate-50 flex items-center justify-center text-slate-300 group-hover:text-indigo-600 group-hover:border-indigo-100 group-hover:bg-indigo-50 transition-all">
-                                        <ArrowRight className="w-4 h-4" />
+                                    <CardTitle className="text-xl font-outfit font-bold text-slate-900 mt-4 group-hover:text-blue-600 transition-colors">
+                                        {project.name}
+                                    </CardTitle>
+                                    <Badge variant="outline" className="w-fit bg-slate-50 text-slate-500 border-slate-200 text-[10px] uppercase font-bold tracking-wider">
+                                        {project.template.name}
+                                    </Badge>
+                                </CardHeader>
+                                <CardContent className="pt-0">
+                                    <div className="flex items-center gap-4 text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">
+                                        <span className="flex items-center gap-1.5"><FileText className="w-3.5 h-3.5" /> {project._count?.documents || 0}</span>
+                                        <span className="flex items-center gap-1.5"><Zap className="w-3.5 h-3.5" /> {project._count?.runs || 0}</span>
+                                        <span className="flex items-center gap-1.5 ml-auto text-slate-300"><Clock className="w-3.5 h-3.5" /> {new Date(project.createdAt).toLocaleDateString()}</span>
                                     </div>
-                                </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                ) : (
+                    <Card className="border-dashed border-2 border-slate-200 bg-slate-50/50 rounded-xl">
+                        <CardContent className="py-20 flex flex-col items-center text-center space-y-4">
+                            <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center">
+                                <Plus className="w-8 h-8 text-slate-400" />
                             </div>
-                        ))
-                    ) : (
-                        <div className="py-32 noise glass rounded-[3rem] flex flex-col items-center justify-center space-y-6">
-                            <div className="w-20 h-20 rounded-[2rem] bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
-                                <Plus className="w-10 h-10" />
-                            </div>
-                            <div className="text-center space-y-2">
-                                <h3 className="text-xl font-display font-bold text-slate-900">Empty Ledger</h3>
-                                <p className="text-slate-500 font-medium">Create your first extraction studio to begin.</p>
+                            <div className="max-w-xs">
+                                <h3 className="text-lg font-bold text-slate-900">No projects found</h3>
+                                <p className="text-slate-500 text-sm mt-1">Get started by creating your first document extraction project.</p>
                             </div>
                             <Button
                                 onClick={() => router.push('/projects/new')}
-                                className="h-14 px-10 rounded-2xl font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xl shadow-indigo-500/10"
+                                className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 shadow-sm"
                             >
-                                Get Started
+                                Create Project
                             </Button>
-                        </div>
-                    )}
-                </div>
-            </section>
+                        </CardContent>
+                    </Card>
+                )}
+            </div>
         </div>
     );
 }
