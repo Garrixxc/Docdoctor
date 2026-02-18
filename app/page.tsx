@@ -7,7 +7,12 @@ import { Shield, FileText, Users, ArrowRight, Zap, CheckCircle2, Globe, Lock } f
 import VerticalCard from "@/components/VerticalCard";
 
 export default async function HomePage() {
-    const session = await getServerSession(authOptions);
+    let session = null;
+    try {
+        session = await getServerSession(authOptions);
+    } catch (error) {
+        console.error("Failed to fetch session:", error);
+    }
 
     if (session) {
         redirect("/dashboard");
@@ -62,7 +67,7 @@ export default async function HomePage() {
                         <VerticalCard
                             title="Vendor Compliance"
                             description="Automatically extract and validate Certificates of Insurance (COI) for vendor onboarding."
-                            icon={Shield}
+                            iconName="shield"
                             color="blue"
                             stats="2.4k+ Managed"
                             href="/api/auth/signin"
@@ -70,7 +75,7 @@ export default async function HomePage() {
                         <VerticalCard
                             title="Trade Docs"
                             description="Parse commercial invoices and packing lists with line-item accuracy and sum checks."
-                            icon={FileText}
+                            iconName="fileText"
                             color="emerald"
                             badge="NEW"
                             href="/api/auth/signin"
@@ -78,7 +83,7 @@ export default async function HomePage() {
                         <VerticalCard
                             title="HR & Resumes"
                             description="Extract candidate details, skills, and contact info from resumes for your ATS."
-                            icon={Users}
+                            iconName="users"
                             color="blue"
                             badge="BETA"
                             href="/api/auth/signin"

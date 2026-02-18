@@ -1,12 +1,23 @@
 'use client';
 
-import { LucideIcon, ArrowRight } from 'lucide-react';
+import { LucideIcon, ArrowRight, Shield, FileText, Users, Zap, CheckCircle2, Globe, Lock, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
+
+const iconMap = {
+    shield: Shield,
+    fileText: FileText,
+    users: Users,
+    zap: Zap,
+    checkCircle2: CheckCircle2,
+    globe: Globe,
+    lock: Lock,
+    alertCircle: AlertCircle
+};
 
 interface VerticalCardProps {
     title: string;
     description: string;
-    icon: LucideIcon;
+    iconName: keyof typeof iconMap;
     color: 'blue' | 'emerald' | 'purple' | 'amber';
     href?: string;
     stats?: string;
@@ -17,18 +28,20 @@ interface VerticalCardProps {
 export default function VerticalCard({
     title,
     description,
-    icon: Icon,
+    iconName,
     color,
     href,
     stats,
     badge,
     className
 }: VerticalCardProps) {
+    const Icon = iconMap[iconName] || Shield;
+
     // Standardizing colors to the blue-focused theme
     const colorMap = {
         blue: 'from-blue-600 to-blue-700 shadow-blue-200',
         emerald: 'from-emerald-600 to-emerald-700 shadow-emerald-200',
-        purple: 'from-blue-600 to-blue-800 shadow-blue-200', // Redirecting purple to darker blue for consistency
+        purple: 'from-blue-600 to-blue-800 shadow-blue-200',
         amber: 'from-amber-500 to-orange-600 shadow-amber-200',
     };
 

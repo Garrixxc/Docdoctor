@@ -25,7 +25,12 @@ export default async function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const session = await getServerSession(authOptions);
+    let session = null;
+    try {
+        session = await getServerSession(authOptions);
+    } catch (error) {
+        console.error("Failed to fetch session:", error);
+    }
 
     return (
         <html lang="en" className={`${inter.variable} ${outfit.variable}`}>

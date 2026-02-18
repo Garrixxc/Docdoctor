@@ -2,9 +2,9 @@
 
 import { signIn } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 
-export default function SignInPage() {
+function SignInForm() {
     const searchParams = useSearchParams();
     const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
     const [isLoading, setIsLoading] = useState(false);
@@ -15,7 +15,7 @@ export default function SignInPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
             <div className="max-w-md w-full space-y-8 p-10 bg-white rounded-xl shadow-lg">
                 <div className="text-center">
                     <h2 className="mt-6 text-3xl font-bold text-gray-900">
@@ -70,5 +70,13 @@ export default function SignInPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function SignInPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-slate-50">Loading Auth...</div>}>
+            <SignInForm />
+        </Suspense>
     );
 }
