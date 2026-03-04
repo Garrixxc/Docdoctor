@@ -13,7 +13,9 @@ import {
     Search,
     Zap,
     MoreVertical,
-    Clock
+    Clock,
+    DollarSign,
+    Layers
 } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 import {
@@ -41,6 +43,7 @@ export default function DashboardPage() {
     const router = useRouter();
     const [projects, setProjects] = useState<Project[]>([]);
     const [usage, setUsage] = useState<any>(null);
+    const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -62,6 +65,16 @@ export default function DashboardPage() {
                 if (isMounted) {
                     setUsage(usageData.usage);
                     setProjects(usageData.projects || []);
+
+                    // Load workspace-scoped stats in parallel
+                    const workspaceId = usageData.usage?.workspaceId;
+                    if (workspaceId) {
+                        const statsRes = await fetch(`/api/stats?workspaceId=${workspaceId}`);
+                        if (statsRes.ok) {
+                            const statsData = await statsRes.json();
+                            if (isMounted) setStats(statsData.stats);
+                        }
+                    }
                 }
             } catch (error) {
                 console.error('Failed to load dashboard data:', error);
@@ -111,6 +124,30 @@ export default function DashboardPage() {
                     New Project
                 </Button>
             </div>
+
+            {/* Stats Cards */}
+            {stats && (
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    {[
+                        { label: 'Documents', value: stats.totalDocs, icon: FileText, color: 'blue' },
+                        { label: 'Runs', value: stats.totalRuns, icon: Zap, color: 'violet' },
+                        { label: 'API Cost', value: `$${stats.totalCostUsd.toFixed(3)}`, icon: DollarSign, color: 'emerald' },
+                        { label: 'Pages', value: stats.totalPagesProcessed, icon: Layers, color: 'amber' },
+                    ].map(({ label, value, icon: Icon, color }) => (
+                        <Card key={label} className="bg-white border-slate-200 shadow-sm">
+                            <CardContent className="p-5">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{label}</span>
+                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center bg-${color}-50 text-${color}-600`}>
+                                        <Icon className="w-4 h-4" />
+                                    </div>
+                                </div>
+                                <p className="text-2xl font-outfit font-black text-slate-900">{value}</p>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            )}
 
             {/* Top Stats / Usage */}
             {usage && (

@@ -1,10 +1,12 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [vector]
 }
 
 model User {
@@ -298,6 +300,18 @@ model Export {
   @@index([projectId])
   @@index([runId])
   @@map("exports")
+}
+
+model HtsCode {
+  id          String  @id @default(cuid())
+  code        String  @unique  // e.g. "8471.30"
+  description String
+  section     String?          // e.g. "XVI – Machinery and Mechanical Appliances"
+  chapter     String?          // e.g. "84"
+  embedding   Unsupported("vector(1536)")?
+
+  @@index([code])
+  @@map("hts_codes")
 }
 
 enum WorkspaceTier {

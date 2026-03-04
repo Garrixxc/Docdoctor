@@ -230,6 +230,55 @@ export class ProcessingOrchestrator {
 
                     totalCost += extractionResult.cost;
 
+                    // Step 4b: HTS Classification (Trade Docs only)
+                    const templateSlugForHts = (run.templateSnapshot as any)?.slug || '';
+                    if (templateSlugForHts === 'trade-invoice') {
+                        const htsStep = await this.createStep('hts_classification', {
+                            documentId: document.id,
+                        });
+
+                        await this.executeStep(htsStep.id, async () => {
+                            const { searchHtsCodes } = await import('@/lib/vectordb/hts-search');
+                            const lineItemsRaw = extractionResult.data['line_items'];
+                            let lineItems: any[] = [];
+
+                            try {
+                                lineItems = typeof lineItemsRaw === 'string'
+                                    ? JSON.parse(lineItemsRaw)
+                                    : Array.isArray(lineItemsRaw) ? lineItemsRaw : [];
+                            } catch { lineItems = []; }
+
+                            const htsSuggestions: any[] = [];
+                            for (const item of lineItems.slice(0, 10)) { // cap at 10 items
+                                if (item?.description) {
+                                    const matches = await searchHtsCodes(item.description, 3);
+                                    htsSuggestions.push({
+                                        lineItem: item.description,
+                                        suggestions: matches,
+                                    });
+                                }
+                            }
+
+                            // Store hints in run metadata — later read in the review UI
+                            if (htsSuggestions.length > 0) {
+                                await db.run.update({
+                                    where: { id: this.runId },
+                                    data: {
+                                        progress: {
+                                            ...(run.progress as any || {}),
+                                            hts_suggestions: htsSuggestions,
+                                        },
+                                    },
+                                });
+                            }
+
+                            return { count: htsSuggestions.length };
+                        }).catch((err) => {
+                            // Non-fatal: log and continue if vector DB not ready yet
+                            logger.warn({ error: err.message }, 'HTS classification skipped — vector DB may not be seeded yet');
+                        });
+                    }
+
                     // Step 5: Validation
                     const validateStep = await this.createStep('validation', {
                         documentId: document.id,

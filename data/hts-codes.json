@@ -1,0 +1,1178 @@
+[
+    {
+        "code": "0101.21",
+        "description": "Live horses, pure-bred breeding animals",
+        "section": "I – Live Animals; Animal Products",
+        "chapter": "01"
+    },
+    {
+        "code": "0201.10",
+        "description": "Bovine carcasses and half-carcasses, fresh or chilled",
+        "section": "I – Live Animals; Animal Products",
+        "chapter": "02"
+    },
+    {
+        "code": "0302.11",
+        "description": "Trout, fresh or chilled, excluding fillets",
+        "section": "I – Live Animals; Animal Products",
+        "chapter": "03"
+    },
+    {
+        "code": "0401.10",
+        "description": "Milk and cream, not concentrated, not sweetened, fat content ≤1%",
+        "section": "I – Live Animals; Animal Products",
+        "chapter": "04"
+    },
+    {
+        "code": "0701.10",
+        "description": "Seed potatoes, fresh or chilled",
+        "section": "II – Vegetable Products",
+        "chapter": "07"
+    },
+    {
+        "code": "0802.11",
+        "description": "Almonds, fresh or dried, in shell",
+        "section": "II – Vegetable Products",
+        "chapter": "08"
+    },
+    {
+        "code": "0901.11",
+        "description": "Coffee, not roasted, not decaffeinated",
+        "section": "II – Vegetable Products",
+        "chapter": "09"
+    },
+    {
+        "code": "1001.11",
+        "description": "Durum wheat seed for sowing",
+        "section": "II – Vegetable Products",
+        "chapter": "10"
+    },
+    {
+        "code": "1005.10",
+        "description": "Maize seed for sowing",
+        "section": "II – Vegetable Products",
+        "chapter": "10"
+    },
+    {
+        "code": "1201.10",
+        "description": "Soya beans, whether or not broken, seed",
+        "section": "II – Vegetable Products",
+        "chapter": "12"
+    },
+    {
+        "code": "1511.10",
+        "description": "Crude palm oil",
+        "section": "III – Animal or Vegetable Fats",
+        "chapter": "15"
+    },
+    {
+        "code": "1601.00",
+        "description": "Sausages and similar products of meat",
+        "section": "IV – Prepared Foodstuffs",
+        "chapter": "16"
+    },
+    {
+        "code": "1701.12",
+        "description": "Beet sugar, raw, in solid form",
+        "section": "IV – Prepared Foodstuffs",
+        "chapter": "17"
+    },
+    {
+        "code": "1806.10",
+        "description": "Cocoa powder, containing added sugar or sweetening matter",
+        "section": "IV – Prepared Foodstuffs",
+        "chapter": "18"
+    },
+    {
+        "code": "1901.10",
+        "description": "Preparations for infant use, for retail sale (food)",
+        "section": "IV – Prepared Foodstuffs",
+        "chapter": "19"
+    },
+    {
+        "code": "2009.11",
+        "description": "Orange juice, frozen, unfermented",
+        "section": "IV – Prepared Foodstuffs",
+        "chapter": "20"
+    },
+    {
+        "code": "2101.11",
+        "description": "Extracts, essences and concentrates of coffee",
+        "section": "IV – Prepared Foodstuffs",
+        "chapter": "21"
+    },
+    {
+        "code": "2201.10",
+        "description": "Mineral waters and aerated waters, not sweetened",
+        "section": "IV – Prepared Foodstuffs",
+        "chapter": "22"
+    },
+    {
+        "code": "2204.10",
+        "description": "Sparkling wine made from fresh grapes",
+        "section": "IV – Prepared Foodstuffs",
+        "chapter": "22"
+    },
+    {
+        "code": "2402.10",
+        "description": "Cigars containing tobacco",
+        "section": "IV – Prepared Foodstuffs",
+        "chapter": "24"
+    },
+    {
+        "code": "2701.11",
+        "description": "Anthracite coal",
+        "section": "V – Mineral Products",
+        "chapter": "27"
+    },
+    {
+        "code": "2709.00",
+        "description": "Petroleum oils and oils obtained from bituminous minerals, crude",
+        "section": "V – Mineral Products",
+        "chapter": "27"
+    },
+    {
+        "code": "2710.12",
+        "description": "Light oils and preparations, from petroleum, motor spirit (gasoline)",
+        "section": "V – Mineral Products",
+        "chapter": "27"
+    },
+    {
+        "code": "2711.11",
+        "description": "Natural gas in liquefied state (LNG)",
+        "section": "V – Mineral Products",
+        "chapter": "27"
+    },
+    {
+        "code": "2803.00",
+        "description": "Carbon black and other forms of carbon",
+        "section": "VI – Chemical Products",
+        "chapter": "28"
+    },
+    {
+        "code": "2804.10",
+        "description": "Hydrogen gas",
+        "section": "VI – Chemical Products",
+        "chapter": "28"
+    },
+    {
+        "code": "2901.10",
+        "description": "Saturated acyclic hydrocarbons (petroleum chemicals)",
+        "section": "VI – Chemical Products",
+        "chapter": "29"
+    },
+    {
+        "code": "3001.10",
+        "description": "Glands and other organs for organo-therapeutic uses, dried",
+        "section": "VI – Chemical Products",
+        "chapter": "30"
+    },
+    {
+        "code": "3002.11",
+        "description": "Malaria diagnostic test kits",
+        "section": "VI – Chemical Products",
+        "chapter": "30"
+    },
+    {
+        "code": "3004.10",
+        "description": "Medicaments containing penicillins, for retail sale",
+        "section": "VI – Chemical Products",
+        "chapter": "30"
+    },
+    {
+        "code": "3101.00",
+        "description": "Animal or vegetable fertilisers, whether or not mixed",
+        "section": "VI – Chemical Products",
+        "chapter": "31"
+    },
+    {
+        "code": "3208.10",
+        "description": "Paints and varnishes based on polyesters",
+        "section": "VI – Chemical Products",
+        "chapter": "32"
+    },
+    {
+        "code": "3301.12",
+        "description": "Essential oils of orange",
+        "section": "VI – Chemical Products",
+        "chapter": "33"
+    },
+    {
+        "code": "3401.11",
+        "description": "Soap for toilet use, bars or tablets",
+        "section": "VI – Chemical Products",
+        "chapter": "34"
+    },
+    {
+        "code": "3506.10",
+        "description": "Adhesives based on rubber or plastics (including artificial resins)",
+        "section": "VI – Chemical Products",
+        "chapter": "35"
+    },
+    {
+        "code": "3701.10",
+        "description": "Photographic plates and film for X-ray use",
+        "section": "VI – Chemical Products",
+        "chapter": "37"
+    },
+    {
+        "code": "3808.91",
+        "description": "Insecticides, for retail sale or as preparations",
+        "section": "VI – Chemical Products",
+        "chapter": "38"
+    },
+    {
+        "code": "3901.10",
+        "description": "Polyethylene having a specific gravity < 0.94, in primary forms",
+        "section": "VII – Plastics & Rubber",
+        "chapter": "39"
+    },
+    {
+        "code": "3920.10",
+        "description": "Plates, sheets, film of polymers of ethylene",
+        "section": "VII – Plastics & Rubber",
+        "chapter": "39"
+    },
+    {
+        "code": "4011.10",
+        "description": "New pneumatic tyres of rubber, for motor cars",
+        "section": "VII – Plastics & Rubber",
+        "chapter": "40"
+    },
+    {
+        "code": "4101.20",
+        "description": "Raw hides and skins of bovine (whole), fresh",
+        "section": "VIII – Raw Hides, Leather & Furskins",
+        "chapter": "41"
+    },
+    {
+        "code": "4202.11",
+        "description": "Trunks, suit-cases, vanity cases with outer surface of leather",
+        "section": "VIII – Raw Hides, Leather & Furskins",
+        "chapter": "42"
+    },
+    {
+        "code": "4301.10",
+        "description": "Raw furskins of mink",
+        "section": "VIII – Raw Hides, Leather & Furskins",
+        "chapter": "43"
+    },
+    {
+        "code": "4401.11",
+        "description": "Conifer fuel wood in logs",
+        "section": "IX – Wood, Cork, Basketwork",
+        "chapter": "44"
+    },
+    {
+        "code": "4407.11",
+        "description": "Conifer sawn wood, thickness > 6mm, pine",
+        "section": "IX – Wood, Cork, Basketwork",
+        "chapter": "44"
+    },
+    {
+        "code": "4802.54",
+        "description": "Writing paper, uncoated, rolls or sheets",
+        "section": "X – Paper and Paperboard",
+        "chapter": "48"
+    },
+    {
+        "code": "4901.10",
+        "description": "Printed books, brochures, leaflets, single sheets",
+        "section": "X – Paper and Paperboard",
+        "chapter": "49"
+    },
+    {
+        "code": "5105.10",
+        "description": "Carded wool",
+        "section": "XI – Textiles",
+        "chapter": "51"
+    },
+    {
+        "code": "5201.00",
+        "description": "Cotton, not carded or combed",
+        "section": "XI – Textiles",
+        "chapter": "52"
+    },
+    {
+        "code": "5402.11",
+        "description": "High tenacity nylon yarn, not for retail sale",
+        "section": "XI – Textiles",
+        "chapter": "54"
+    },
+    {
+        "code": "5603.11",
+        "description": "Nonwovens of man-made filaments, weight ≤25 g/m²",
+        "section": "XI – Textiles",
+        "chapter": "56"
+    },
+    {
+        "code": "5701.10",
+        "description": "Carpets and textile floor coverings of wool, knotted",
+        "section": "XI – Textiles",
+        "chapter": "57"
+    },
+    {
+        "code": "5903.10",
+        "description": "Textile fabrics impregnated with polyvinyl chloride (PVC)",
+        "section": "XI – Textiles",
+        "chapter": "59"
+    },
+    {
+        "code": "6101.20",
+        "description": "Men's overcoats of cotton, knitted or crocheted",
+        "section": "XII – Apparel & Clothing",
+        "chapter": "61"
+    },
+    {
+        "code": "6104.61",
+        "description": "Women's trousers of wool, knitted or crocheted",
+        "section": "XII – Apparel & Clothing",
+        "chapter": "61"
+    },
+    {
+        "code": "6109.10",
+        "description": "T-shirts of cotton, knitted or crocheted",
+        "section": "XII – Apparel & Clothing",
+        "chapter": "61"
+    },
+    {
+        "code": "6110.20",
+        "description": "Jerseys, pullovers of cotton, knitted or crocheted",
+        "section": "XII – Apparel & Clothing",
+        "chapter": "61"
+    },
+    {
+        "code": "6201.11",
+        "description": "Men's overcoats of wool or fine animal hair (not knitted)",
+        "section": "XII – Apparel & Clothing",
+        "chapter": "62"
+    },
+    {
+        "code": "6203.11",
+        "description": "Men's suits of wool",
+        "section": "XII – Apparel & Clothing",
+        "chapter": "62"
+    },
+    {
+        "code": "6204.11",
+        "description": "Women's suits of wool",
+        "section": "XII – Apparel & Clothing",
+        "chapter": "62"
+    },
+    {
+        "code": "6205.20",
+        "description": "Men's shirts of cotton (not knitted)",
+        "section": "XII – Apparel & Clothing",
+        "chapter": "62"
+    },
+    {
+        "code": "6206.10",
+        "description": "Women's blouses of silk",
+        "section": "XII – Apparel & Clothing",
+        "chapter": "62"
+    },
+    {
+        "code": "6302.10",
+        "description": "Bed linen of cotton, knitted or crocheted",
+        "section": "XII – Apparel & Clothing",
+        "chapter": "63"
+    },
+    {
+        "code": "6401.10",
+        "description": "Waterproof footwear with soles of rubber or plastics",
+        "section": "XIII – Stone, Plaster, Ceramics, Glass",
+        "chapter": "64"
+    },
+    {
+        "code": "6403.51",
+        "description": "Footwear with leather uppers, covering the ankle",
+        "section": "XIII – Stone, Plaster, Ceramics, Glass",
+        "chapter": "64"
+    },
+    {
+        "code": "6502.00",
+        "description": "Hat shapes, plaited or assembled from strips",
+        "section": "XIII – Stone, Plaster, Ceramics, Glass",
+        "chapter": "65"
+    },
+    {
+        "code": "6802.11",
+        "description": "Tiles and cubes of marble, smallest surface area ≤7cm²",
+        "section": "XIII – Stone, Plaster, Ceramics, Glass",
+        "chapter": "68"
+    },
+    {
+        "code": "6901.00",
+        "description": "Bricks, blocks of siliceous fossil meals (refractory)",
+        "section": "XIII – Stone, Plaster, Ceramics, Glass",
+        "chapter": "69"
+    },
+    {
+        "code": "6911.10",
+        "description": "Tableware of porcelain or china",
+        "section": "XIII – Stone, Plaster, Ceramics, Glass",
+        "chapter": "69"
+    },
+    {
+        "code": "7001.00",
+        "description": "Cullet and other waste and scrap of glass",
+        "section": "XIII – Stone, Plaster, Ceramics, Glass",
+        "chapter": "70"
+    },
+    {
+        "code": "7005.10",
+        "description": "Float glass, non-wired, tinted throughout",
+        "section": "XIII – Stone, Plaster, Ceramics, Glass",
+        "chapter": "70"
+    },
+    {
+        "code": "7102.10",
+        "description": "Diamonds, unsorted",
+        "section": "XIV – Precious Stones & Metals",
+        "chapter": "71"
+    },
+    {
+        "code": "7108.11",
+        "description": "Gold powder (non-monetary)",
+        "section": "XIV – Precious Stones & Metals",
+        "chapter": "71"
+    },
+    {
+        "code": "7113.11",
+        "description": "Silver jewellery",
+        "section": "XIV – Precious Stones & Metals",
+        "chapter": "71"
+    },
+    {
+        "code": "7114.11",
+        "description": "Silver articles of goldsmiths' wares",
+        "section": "XIV – Precious Stones & Metals",
+        "chapter": "71"
+    },
+    {
+        "code": "7201.10",
+        "description": "Non-alloy pig iron, phosphorus content ≤0.5%",
+        "section": "XV – Base Metals",
+        "chapter": "72"
+    },
+    {
+        "code": "7208.10",
+        "description": "Flat-rolled iron or non-alloy steel, in coils, not further worked",
+        "section": "XV – Base Metals",
+        "chapter": "72"
+    },
+    {
+        "code": "7304.11",
+        "description": "Seamless line pipe of iron or steel, for oil/gas",
+        "section": "XV – Base Metals",
+        "chapter": "73"
+    },
+    {
+        "code": "7401.00",
+        "description": "Copper mattes; cement copper",
+        "section": "XV – Base Metals",
+        "chapter": "74"
+    },
+    {
+        "code": "7501.10",
+        "description": "Nickel mattes",
+        "section": "XV – Base Metals",
+        "chapter": "75"
+    },
+    {
+        "code": "7601.10",
+        "description": "Unwrought aluminium, not alloyed",
+        "section": "XV – Base Metals",
+        "chapter": "76"
+    },
+    {
+        "code": "7801.10",
+        "description": "Unwrought lead, refined",
+        "section": "XV – Base Metals",
+        "chapter": "78"
+    },
+    {
+        "code": "7904.00",
+        "description": "Zinc bars, rods, profiles and wire",
+        "section": "XV – Base Metals",
+        "chapter": "79"
+    },
+    {
+        "code": "8002.00",
+        "description": "Tin waste and scrap",
+        "section": "XV – Base Metals",
+        "chapter": "80"
+    },
+    {
+        "code": "8101.10",
+        "description": "Tungsten powders",
+        "section": "XV – Base Metals",
+        "chapter": "81"
+    },
+    {
+        "code": "8207.13",
+        "description": "Rock drilling or earth boring tools with working part of cermets",
+        "section": "XV – Base Metals",
+        "chapter": "82"
+    },
+    {
+        "code": "8301.10",
+        "description": "Padlocks of base metal",
+        "section": "XV – Base Metals",
+        "chapter": "83"
+    },
+    {
+        "code": "8401.10",
+        "description": "Nuclear reactors",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8408.10",
+        "description": "Marine propulsion compression-ignition piston engines",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8410.11",
+        "description": "Hydraulic turbines of power not exceeding 1,000 kW",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8413.11",
+        "description": "Pumps for dispensing fuel or lubricants",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8415.10",
+        "description": "Air conditioning machines, window or wall type",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8418.10",
+        "description": "Refrigerators of household type",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8421.12",
+        "description": "Centrifuges, clothes-dryers (laundry)",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8422.11",
+        "description": "Dishwashing machines of household type",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8423.10",
+        "description": "Personal weighing machines including baby scales",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8428.10",
+        "description": "Lifts and skip hoists",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8429.11",
+        "description": "Bulldozers and angledozers, track laying",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8443.31",
+        "description": "Machines performing two or more printing functions",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8450.11",
+        "description": "Fully-automatic washing machines for laundry, ≤10 kg dry linen",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8451.10",
+        "description": "Dry-cleaning machines",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8452.10",
+        "description": "Sewing machines of household type",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8471.30",
+        "description": "Portable automatic data processing machines (laptops, notebooks, subnotebooks)",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8471.41",
+        "description": "Automatic data processing machines, comprising main processing unit and input/output units (desktop computers)",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8471.49",
+        "description": "Automatic data processing machines (other, not portable, not comprising main unit and I/O in same housing)",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8471.50",
+        "description": "Processing units for automatic data processing machines, not containing storage units",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8471.60",
+        "description": "Input or output units for ADP machines (keyboards, mice, touchpads, monitors)",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8471.70",
+        "description": "Storage units (hard drives, solid-state drives, USB drives) for ADP machines",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8471.80",
+        "description": "Other units of ADP machines (graphics cards, network interface cards)",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8473.30",
+        "description": "Parts and accessories of ADP machines (computer parts)",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8481.10",
+        "description": "Pressure-reducing valves",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "84"
+    },
+    {
+        "code": "8501.10",
+        "description": "Electric motors of an output not exceeding 37.5 W",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8504.10",
+        "description": "Ballasts for discharge lamps or tubes",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8506.10",
+        "description": "Manganese dioxide primary cells and batteries",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8507.10",
+        "description": "Lead-acid storage batteries, used for starting piston engines",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8507.60",
+        "description": "Lithium-ion rechargeable batteries (battery packs)",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8517.11",
+        "description": "Line telephone sets with cordless handsets",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8517.12",
+        "description": "Telephones for cellular networks or wireless networks (smartphones)",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8517.13",
+        "description": "Smartphones and other telephone handsets",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8518.10",
+        "description": "Microphones and stands therefor",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8518.21",
+        "description": "Single loudspeakers, mounted in their enclosures",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8518.30",
+        "description": "Headphones, earphones and combined microphone/speaker sets",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8519.81",
+        "description": "Sound recording apparatus using magnetic, optical or semiconductor media (audio players)",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8521.10",
+        "description": "Magnetic tape-type video recording apparatus",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8523.51",
+        "description": "Solid-state, non-volatile storage devices (flash memory cards, USB flash drives)",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8525.80",
+        "description": "Television cameras, digital cameras and video camera recorders",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8527.13",
+        "description": "Radio broadcast receivers, only receiving, combined with sound recording apparatus",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8528.72",
+        "description": "Colour television reception apparatus with CRT or LCD screen (TVs)",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8534.00",
+        "description": "Printed circuits (PCBs)",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8536.50",
+        "description": "Switches for electric circuits, for a voltage not exceeding 1,000 V",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8541.10",
+        "description": "Diodes, other than photosensitive or light-emitting diodes",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8541.21",
+        "description": "Transistors (other than photosensitive), dissipation ≤1 W",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8541.40",
+        "description": "Photosensitive semiconductor devices including solar cells and photodiodes",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8542.31",
+        "description": "Electronic integrated circuits – processors and controllers (CPUs, GPUs, microcontrollers)",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8542.32",
+        "description": "Electronic integrated circuits – memories (RAM, ROM, flash memory chips)",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8542.33",
+        "description": "Electronic integrated circuits – amplifiers",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8542.39",
+        "description": "Electronic integrated circuits, other (ASICs, FPGAs, other ICs)",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8544.11",
+        "description": "Winding wire of copper (magnet wire)",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8544.42",
+        "description": "Electric conductors, for voltage ≤1,000 V, fitted with connectors (USB cables, power cables)",
+        "section": "XVI – Machinery & Mechanical Appliances",
+        "chapter": "85"
+    },
+    {
+        "code": "8601.10",
+        "description": "Rail locomotives powered from an external source",
+        "section": "XVII – Vehicles, Aircraft & Vessels",
+        "chapter": "86"
+    },
+    {
+        "code": "8701.91",
+        "description": "Agricultural tractors",
+        "section": "XVII – Vehicles, Aircraft & Vessels",
+        "chapter": "87"
+    },
+    {
+        "code": "8702.10",
+        "description": "Public transport motor vehicles (buses, coaches) with compression-ignition engine",
+        "section": "XVII – Vehicles, Aircraft & Vessels",
+        "chapter": "87"
+    },
+    {
+        "code": "8703.22",
+        "description": "Motor cars with spark-ignition engine, 1,000–1,500 cc",
+        "section": "XVII – Vehicles, Aircraft & Vessels",
+        "chapter": "87"
+    },
+    {
+        "code": "8703.40",
+        "description": "Vehicles with both spark-ignition engine and electric motor (hybrid cars)",
+        "section": "XVII – Vehicles, Aircraft & Vessels",
+        "chapter": "87"
+    },
+    {
+        "code": "8703.80",
+        "description": "Vehicles with only electric motor for propulsion (battery electric vehicles, EVs)",
+        "section": "XVII – Vehicles, Aircraft & Vessels",
+        "chapter": "87"
+    },
+    {
+        "code": "8704.21",
+        "description": "Motor vehicles for goods transport, diesel, GVW ≤5 tonnes (delivery vans, pickup trucks)",
+        "section": "XVII – Vehicles, Aircraft & Vessels",
+        "chapter": "87"
+    },
+    {
+        "code": "8711.20",
+        "description": "Motorcycles (including mopeds) with reciprocating engine 50–250 cc",
+        "section": "XVII – Vehicles, Aircraft & Vessels",
+        "chapter": "87"
+    },
+    {
+        "code": "8714.10",
+        "description": "Parts and accessories for motorcycles",
+        "section": "XVII – Vehicles, Aircraft & Vessels",
+        "chapter": "87"
+    },
+    {
+        "code": "8716.10",
+        "description": "Trailers and semi-trailers for housing or camping (caravans)",
+        "section": "XVII – Vehicles, Aircraft & Vessels",
+        "chapter": "87"
+    },
+    {
+        "code": "8801.00",
+        "description": "Balloons and dirigibles; gliders; other non-powered aircraft",
+        "section": "XVII – Vehicles, Aircraft & Vessels",
+        "chapter": "88"
+    },
+    {
+        "code": "8802.11",
+        "description": "Helicopters of an unladen weight not exceeding 2,000 kg",
+        "section": "XVII – Vehicles, Aircraft & Vessels",
+        "chapter": "88"
+    },
+    {
+        "code": "8802.40",
+        "description": "Aeroplanes and other powered aircraft of an unladen weight exceeding 15,000 kg (large commercial jets)",
+        "section": "XVII – Vehicles, Aircraft & Vessels",
+        "chapter": "88"
+    },
+    {
+        "code": "8803.10",
+        "description": "Propellers and rotors and parts thereof for aircraft",
+        "section": "XVII – Vehicles, Aircraft & Vessels",
+        "chapter": "88"
+    },
+    {
+        "code": "8901.10",
+        "description": "Cruise ships, excursion boats and similar vessels",
+        "section": "XVII – Vehicles, Aircraft & Vessels",
+        "chapter": "89"
+    },
+    {
+        "code": "8902.00",
+        "description": "Fishing vessels; factory ships and other vessels for processing fish",
+        "section": "XVII – Vehicles, Aircraft & Vessels",
+        "chapter": "89"
+    },
+    {
+        "code": "9001.10",
+        "description": "Optical fibres and optical fibre bundles",
+        "section": "XVIII – Optical, Photographic & Medical",
+        "chapter": "90"
+    },
+    {
+        "code": "9006.10",
+        "description": "Cameras for aerial photography",
+        "section": "XVIII – Optical, Photographic & Medical",
+        "chapter": "90"
+    },
+    {
+        "code": "9013.10",
+        "description": "Telescopic sights for fitting to arms; periscopes; telescopes",
+        "section": "XVIII – Optical, Photographic & Medical",
+        "chapter": "90"
+    },
+    {
+        "code": "9018.11",
+        "description": "Electro-diagnostic apparatus for medical use (ECG machines)",
+        "section": "XVIII – Optical, Photographic & Medical",
+        "chapter": "90"
+    },
+    {
+        "code": "9018.31",
+        "description": "Syringes, with or without needles",
+        "section": "XVIII – Optical, Photographic & Medical",
+        "chapter": "90"
+    },
+    {
+        "code": "9018.39",
+        "description": "Medical needles, catheters and cannulae",
+        "section": "XVIII – Optical, Photographic & Medical",
+        "chapter": "90"
+    },
+    {
+        "code": "9019.10",
+        "description": "Mechano-therapy appliances; massage apparatus; physiotherapy apparatus",
+        "section": "XVIII – Optical, Photographic & Medical",
+        "chapter": "90"
+    },
+    {
+        "code": "9021.10",
+        "description": "Orthopedic appliances, splints and fracture appliances",
+        "section": "XVIII – Optical, Photographic & Medical",
+        "chapter": "90"
+    },
+    {
+        "code": "9021.31",
+        "description": "Artificial joints (hip, knee, shoulder prostheses)",
+        "section": "XVIII – Optical, Photographic & Medical",
+        "chapter": "90"
+    },
+    {
+        "code": "9022.12",
+        "description": "CT scanning apparatus (computed tomography scanners)",
+        "section": "XVIII – Optical, Photographic & Medical",
+        "chapter": "90"
+    },
+    {
+        "code": "9026.10",
+        "description": "Instruments for measuring or checking flow, level and pressure of liquids",
+        "section": "XVIII – Optical, Photographic & Medical",
+        "chapter": "90"
+    },
+    {
+        "code": "9030.31",
+        "description": "Multimeters without a recording device",
+        "section": "XVIII – Optical, Photographic & Medical",
+        "chapter": "90"
+    },
+    {
+        "code": "9101.11",
+        "description": "Wristwatches with mechanical display only, battery powered",
+        "section": "XVIII – Optical, Photographic & Medical",
+        "chapter": "91"
+    },
+    {
+        "code": "9201.10",
+        "description": "Upright pianos",
+        "section": "XIX – Musical Instruments",
+        "chapter": "92"
+    },
+    {
+        "code": "9202.10",
+        "description": "Violins and other string instruments played with a bow",
+        "section": "XIX – Musical Instruments",
+        "chapter": "92"
+    },
+    {
+        "code": "9207.10",
+        "description": "Keyboard instruments where sound produced electrically (electric pianos, organs, synthesizers)",
+        "section": "XIX – Musical Instruments",
+        "chapter": "92"
+    },
+    {
+        "code": "9301.10",
+        "description": "Artillery weapons",
+        "section": "XX – Arms and Ammunition",
+        "chapter": "93"
+    },
+    {
+        "code": "9302.00",
+        "description": "Revolvers and pistols (handguns)",
+        "section": "XX – Arms and Ammunition",
+        "chapter": "93"
+    },
+    {
+        "code": "9401.10",
+        "description": "Seats of a kind used for aircraft",
+        "section": "XX – Miscellaneous Manufactured Articles",
+        "chapter": "94"
+    },
+    {
+        "code": "9401.61",
+        "description": "Seats of wood (chairs, upholstered, for use in dwellings)",
+        "section": "XX – Miscellaneous Manufactured Articles",
+        "chapter": "94"
+    },
+    {
+        "code": "9403.10",
+        "description": "Metal furniture for offices (desks, chairs, filing cabinets)",
+        "section": "XX – Miscellaneous Manufactured Articles",
+        "chapter": "94"
+    },
+    {
+        "code": "9403.30",
+        "description": "Wooden furniture for offices",
+        "section": "XX – Miscellaneous Manufactured Articles",
+        "chapter": "94"
+    },
+    {
+        "code": "9404.21",
+        "description": "Mattresses of cellular rubber or plastics",
+        "section": "XX – Miscellaneous Manufactured Articles",
+        "chapter": "94"
+    },
+    {
+        "code": "9405.10",
+        "description": "Chandeliers and other electric ceiling or wall lighting fittings",
+        "section": "XX – Miscellaneous Manufactured Articles",
+        "chapter": "94"
+    },
+    {
+        "code": "9406.10",
+        "description": "Prefabricated buildings of wood",
+        "section": "XX – Miscellaneous Manufactured Articles",
+        "chapter": "94"
+    },
+    {
+        "code": "9503.00",
+        "description": "Tricycles, scooters, pedal cars and similar wheeled toys; dolls' carriages; dolls; other toys",
+        "section": "XX – Miscellaneous Manufactured Articles",
+        "chapter": "95"
+    },
+    {
+        "code": "9504.20",
+        "description": "Articles and accessories for billiards",
+        "section": "XX – Miscellaneous Manufactured Articles",
+        "chapter": "95"
+    },
+    {
+        "code": "9504.50",
+        "description": "Video game consoles and machines",
+        "section": "XX – Miscellaneous Manufactured Articles",
+        "chapter": "95"
+    },
+    {
+        "code": "9506.11",
+        "description": "Ski equipment (downhill snow skis)",
+        "section": "XX – Miscellaneous Manufactured Articles",
+        "chapter": "95"
+    },
+    {
+        "code": "9506.61",
+        "description": "Lawn tennis balls",
+        "section": "XX – Miscellaneous Manufactured Articles",
+        "chapter": "95"
+    },
+    {
+        "code": "9506.91",
+        "description": "Sports equipment (general – dumbbells, barbells, gym equipment)",
+        "section": "XX – Miscellaneous Manufactured Articles",
+        "chapter": "95"
+    },
+    {
+        "code": "9601.10",
+        "description": "Worked ivory and articles of ivory",
+        "section": "XXI – Works of Art",
+        "chapter": "96"
+    },
+    {
+        "code": "9602.00",
+        "description": "Worked vegetable or mineral carving material and articles thereof",
+        "section": "XXI – Works of Art",
+        "chapter": "96"
+    },
+    {
+        "code": "9608.10",
+        "description": "Ball point pens",
+        "section": "XXI – Works of Art",
+        "chapter": "96"
+    },
+    {
+        "code": "9612.10",
+        "description": "Typewriter or similar ribbons, inked or otherwise prepared for giving impressions",
+        "section": "XXI – Works of Art",
+        "chapter": "96"
+    },
+    {
+        "code": "9613.10",
+        "description": "Pocket lighters, gas fuelled, non-refillable",
+        "section": "XXI – Works of Art",
+        "chapter": "96"
+    },
+    {
+        "code": "9614.00",
+        "description": "Smoking pipes (including pipe bowls)",
+        "section": "XXI – Works of Art",
+        "chapter": "96"
+    },
+    {
+        "code": "9701.10",
+        "description": "Paintings, drawings and pastels, executed entirely by hand",
+        "section": "XXI – Works of Art",
+        "chapter": "97"
+    },
+    {
+        "code": "9702.00",
+        "description": "Original engravings, prints and lithographs",
+        "section": "XXI – Works of Art",
+        "chapter": "97"
+    },
+    {
+        "code": "9703.10",
+        "description": "Original sculptures and statuary, in any material",
+        "section": "XXI – Works of Art",
+        "chapter": "97"
+    },
+    {
+        "code": "9706.00",
+        "description": "Antiques of an age exceeding one hundred years",
+        "section": "XXI – Works of Art",
+        "chapter": "97"
+    }
+]

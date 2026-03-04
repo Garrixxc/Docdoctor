@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { COI_TEMPLATE, COI_DETECTION_KEYWORDS } from '../lib/templates/coi-template';
 import { TRADE_INVOICE_TEMPLATE, TRADE_INVOICE_DETECTION_KEYWORDS } from '../lib/templates/trade-invoice-template';
 import { RESUME_TEMPLATE, RESUME_DETECTION_KEYWORDS } from '../lib/templates/resume-template';
+import { seedHtsCodes } from '../lib/vectordb/hts-seeder';
 
 const prisma = new PrismaClient();
 
@@ -92,6 +93,9 @@ async function main() {
             },
         });
     }
+
+    console.log('Seeding HTS codes vector DB...');
+    await seedHtsCodes(prisma);
 
     console.log('Seed completed successfully!');
 }
