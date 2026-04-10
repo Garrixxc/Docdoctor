@@ -68,8 +68,8 @@ export default function ReviewPage() {
         }
     }
 
-    async function updateField(fieldId: string, action: string, value?: any) {
-        await fetch(`/api/records/${fieldId.split('-')[0]}/fields/${fieldId}`, {
+    async function updateField(fieldId: string, action: string, value?: any, recordId?: string) {
+        await fetch(`/api/records/${recordId || fieldId}/fields/${fieldId}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action, value }),
@@ -243,7 +243,7 @@ export default function ReviewPage() {
                                                                     className="h-9 min-w-[200px]"
                                                                     autoFocus
                                                                 />
-                                                                <Button size="sm" className="h-9 px-3 bg-blue-600" onClick={() => updateField(field.id, 'EDIT', editValue)}>
+                                                                <Button size="sm" className="h-9 px-3 bg-blue-600" onClick={() => updateField(field.id, 'EDIT', editValue, record.id)}>
                                                                     <Check className="w-4 h-4" />
                                                                 </Button>
                                                                 <Button size="sm" variant="ghost" className="h-9 px-3" onClick={() => setEditingField(null)}>
@@ -296,7 +296,7 @@ export default function ReviewPage() {
                                                                     size="sm"
                                                                     variant="outline"
                                                                     className="h-8 px-3 border-slate-200 text-slate-600 hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50 font-bold text-[10px] uppercase tracking-wider"
-                                                                    onClick={() => updateField(field.id, 'APPROVE')}
+                                                                    onClick={() => updateField(field.id, 'APPROVE', undefined, record.id)}
                                                                 >
                                                                     <Check className="w-3 h-3 mr-1.5" />
                                                                     Approve

@@ -54,16 +54,24 @@ export async function POST(
             new Set(records.flatMap((r) => r.fields.map((f) => f.fieldName)))
         );
 
+        const csvEscape = (v: any): string => {
+            const s = v === null || v === undefined ? '' : typeof v === 'object' ? JSON.stringify(v) : String(v);
+            // Wrap in quotes if the value contains commas, newlines, or quotes
+            if (s.includes(',') || s.includes('\n') || s.includes('"')) {
+                return `"${s.replace(/"/g, '""')}"`;
+            }
+            return s;
+        };
+
         const csvLines = [
-            ['document_name', ...headers].join(','),
+            ['document_name', ...headers].map(csvEscape).join(','),
             ...records.map((record) => {
                 const row: any[] = [record.document.name];
                 for (const header of headers) {
                     const field = record.fields.find((f) => f.fieldName === header);
-                    const value = field?.extractedValue || '';
-                    row.push(JSON.stringify(value).replace(/^"|"$/g, ''));
+                    row.push(field?.extractedValue ?? '');
                 }
-                return row.join(',');
+                return row.map(csvEscape).join(',');
             }),
         ];
 

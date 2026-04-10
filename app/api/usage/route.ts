@@ -25,19 +25,32 @@ export async function GET(req: NextRequest) {
     }
 
     const workspace = user.memberships[0].workspace;
-    const usage = await getUsageInfo(workspace.id);
+
+    const [usage, projects] = await Promise.all([
+        getUsageInfo(workspace.id),
+        db.project.findMany({
+            where: { workspaceId: workspace.id, status: 'ACTIVE' },
+            include: {
+                template: true,
+                _count: { select: { documents: true, runs: true } },
+            },
+            orderBy: { createdAt: 'desc' },
+        }),
+    ]);
 
     return NextResponse.json({
         usage: {
             ...usage,
+            workspaceId: workspace.id,
             pagesLimit: usage.pagesLimit === -1 ? 'unlimited' : usage.pagesLimit,
             remainingPages: usage.remainingPages === -1 ? 'unlimited' : usage.remainingPages,
         },
         workspace: {
             id: workspace.id,
             name: workspace.name,
-            tier: (session?.user as any)?.tier || 'FREE',
+            tier: workspace.tier,
         },
+        projects,
         limits: {
             freeTierPages: FREE_TIER_PAGE_LIMIT,
         },
